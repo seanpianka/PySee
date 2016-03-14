@@ -16,7 +16,6 @@ import os
 import helpers
 
 
-
 paths = {}
 paths['confdir'] = os.path.expanduser('~/.pyscreen/')
 config_ini = helpers.init_config(paths['confdir'] + 'config.ini')

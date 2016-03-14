@@ -21,14 +21,20 @@ import clipboard
 from datetime import datetime as dt
 
 from configs import paths as p
+from helpers import find_screenshot_tool 
 
 
 def take_screenshot():
-    t_format = r'%Y-%m-%d-%H-%M-%S'
-    gnomess = 'gnome-screenshot -apf ' + p['imgdir'] + '{}.png 2>/dev/null'
-    cmd = Popen([gnomess.format(dt.now().strftime(t_format))], shell=True)
-    img_path = p['imgdir'] + '{}.png'.format(dt.now().strftime(t_format))
+    time_format = r'%Y-%m-%d-%H-%M-%S'
+
+    tool = find_screenshot_tool()
+   
+    command = tool.command + ' ' + tool.area + ' ' + tool.filename + ' '
+    command += p['imgdir'] + '{}.png 2>/dev/null'
+    cmd = Popen([command.format(dt.now().strftime(time_format))], shell=True)
+    img_path = p['imgdir'] + '{}.png'.format(dt.now().strftime(time_format))
     cmd.communicate()
+
     trunc_img_path = img_path.replace(p['imgdir'], '')[:-4]
     img_paths = {
             'full': img_path,           # Screenshot and absolute path

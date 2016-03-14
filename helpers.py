@@ -11,6 +11,44 @@ Script "helps ease issues between Python 2 and 3"
 .. seealso:: http://github.com/Imgur/imgurpython/
 
 """
+from collections import namedtuple, OrderedDict
+from distutils.spawn import find_executable
+
+
+def create_tool(name, command, area, window, full, filename):
+    # Tool used for creating a namedtuple of available tools
+    Tool = namedtuple('Tool', 'name command area window full filename')
+    return Tool(name=name, command=command, area=area,
+                window=window, full=full, filename=filename)
+
+
+def is_tool(name):
+    return find_executable(name) is not None
+
+
+def find_screenshot_tool():
+    tools = OrderedDict()
+    tools['gnome-screenshot'] = create_tool(name='gnome-screenshot',
+                                            command='gnome-screenshot -p',
+                                            area='-a',
+                                            window='-w',
+                                            full='',
+                                            filename='-f')
+    tools['screencapture'] = create_tool(name='screencapture',
+                                         command='screencapture -Cx',
+                                         area='-s',
+                                         window='-w',
+                                         full='',
+                                         filename='')
+    tools['shutter'] = create_tool(name='shutter',
+                                   command='shutter',
+                                   area='-s',
+                                   window='-w',
+                                   full='-f',
+                                   filename='-o')
+    for tool in tools:
+        if is_tool(tool):
+            return tools[tool]
 
 
 def get_config():
