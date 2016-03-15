@@ -22,14 +22,14 @@ is return is then sent to the system clipboard.
 5. Screenshot mechanism and valid installation checks performed on the command-line via the `subprocess` Python module.
 
 # Plans
-1. ##### Choice of image hosting
+1. Choice of image hosting
    * Allow for user-selection of hosting including by not limited to:
       * [Imgur](http://imgur.com/)
       * [Minus](http://minus.com/)
       * [Photobucket](http://s5.photobucket.com/)
       * [PostImage](http://postimage.org/)
       * Possibly my own?
-2. ##### Wider selection of available screenshot tools
+2. Wider selection of available screenshot tools
    * Currently, the supported tools are:
       * OSx:
          1. `screencapture`
@@ -37,18 +37,19 @@ is return is then sent to the system clipboard.
          1. `gnome-screenshot`
          2. `shutter`
    * I would like to make this list more encompassing and allow for user-selection + modification (without having to hard-code changes to the `pysee.py` file.
-3. ##### Custom storage locations and names (patterns or specific names/lists prefixs)
+3. Custom storage locations and names (patterns or specific names/lists prefixs)
    * Allow for user-defined path and name for screenshot saving.
-4. ##### GUI implementation
+4. GUI implementation
    * *Move away from command-line startup* and allow for easier usage through a GUI (possibly through `tkinter`?) which allows for "presence" (be a program that can stay running in the background, listening from the next item on the list...
-5. ##### System-wide hotkeys
+5. System-wide hotkeys
    * This is my main gripe with the current implementation... I have to start the damn thing from the terminal. If there was ever a time where I needed to quickly capture something... _it's gone!_ This will change... once I figure out how.
-6. ##### Timer
+6. Timer
    * Allow for a user-set timer to automatically take a screenshot of either an open window, all screens, or region.
    * Send to image host, FTP, Dropbox/Google Drive, save to specific location, etc..
-7. ##### Dedicated website for downloading/tutorials
+7. Dedicated website for downloading/tutorials
    * Move it away from GitHub (beyond hosting of the source)
-8. ##### Installation via `pip`
+8. Installation via `pip`
+   * Easy solution to dependencies issue and would make un/installation cleaner.
 
 # Installation
 Download the code as a zip file, extract to a directory, and run the PySee.py script from the terminal with Python3.
