@@ -20,15 +20,15 @@ import imgur
 import clipboard
 from datetime import datetime as dt
 
-from configs import paths as p
-from helpers import find_screenshot_tool 
+from configs import paths as p, check_config
+from helpers import find_screenshot_tool
 
 
 def take_screenshot():
     time_format = r'%Y-%m-%d-%H-%M-%S'
 
     tool = find_screenshot_tool()
-   
+
     command = tool.command + ' ' + tool.area + ' ' + tool.filename + ' '
     command += p['imgdir'] + '{}.png 2>/dev/null'
     cmd = Popen([command.format(dt.now().strftime(time_format))], shell=True)
@@ -47,10 +47,15 @@ def main():
     client = imgur.authenticate_client()
     screenshot_paths = take_screenshot()
     response = imgur.upload_picture(client, screenshot_paths)
-    print("Successful upload of {}!".format(screenshot_paths['trunc']),
-          "\nYou can find it here: {}".format(response['link']),
+    if response is not None:
+        print("Successful upload of {}.png!".format(screenshot_paths['trunc']),
+              "\nYou can find it here: {}".format(response['link']),
           "\nIt has also been copied to your system clipboard (Ctrl+V)")
-    clipboard.copy(response['link'])
+        clipboard.copy(response['link'])
+    else:
+        print("There was an error when attempting to save or" +
+                "upload the screenshot. Please try again.")
 
 if __name__ == "__main__":
+    check_config()
     main()
