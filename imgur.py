@@ -40,8 +40,10 @@ def upload_picture(client, img_paths):
         'title': None,
         'description': 'Screenshot taken via PySee v1.0'
     }
-
-    return client.upload_from_path(img_paths['full'], config=conf, anon=True)
+    try:
+        return client.upload_from_path(img_paths['full'], config=conf, anon=True)
+    except:
+        return None
 
 if __name__ == "__main__":
     exit()
