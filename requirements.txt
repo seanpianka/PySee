@@ -1,0 +1,4 @@
+imgurpython
+clipboard
+datetime
+requests
