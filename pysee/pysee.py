@@ -24,7 +24,7 @@ from configs import paths as p, check_config
 from helpers import find_screenshot_tool
 
 
-def take_screenshot():
+def screenshot():
     time_format = r'%Y-%m-%d-%H-%M-%S'
 
     tool = find_screenshot_tool()
@@ -43,9 +43,10 @@ def take_screenshot():
     return img_paths
 
 
-def main():
+def run():
+    check_config()
     client = imgur.authenticate_client()
-    screenshot_paths = take_screenshot()
+    screenshot_paths = screenshot()
     response = imgur.upload_picture(client, screenshot_paths)
     if response is not None:
         print("Successful upload of {}.png!".format(screenshot_paths['trunc']),
@@ -57,5 +58,4 @@ def main():
                 "upload the screenshot. Please try again.")
 
 if __name__ == "__main__":
-    check_config()
-    main()
+    run()
