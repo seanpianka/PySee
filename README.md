@@ -1,5 +1,5 @@
 # PySee
-A `lightweight screenshot tool` for `Linux` and `OSx`, built in `Python`, with automatic `Imgur uploading` and `system clipboard copying`.
+A `lightweight screenshot tool` for `Linux`* and `OSX`*, built in `Python 3`, with automatic [`image host uploading`](http://imgur.com/) and `system clipboard copying`.
 
 ---
 
@@ -16,19 +16,21 @@ is return is then sent to the system clipboard.
 
 # Issues
 1. All of the files for the tool must be manually installed.
-2. Dependencies must be manually installed.
-3. No method for alternate forms of screenshots besides physically hardcoding differences in the `pysee.py` file.
-4. Tool must be run from the command-line for each screenshot.
-5. Screenshot mechanism and valid installation checks performed on the command-line via the `subprocess` Python module.
+   * Main program files
+   * ~~Configuration files~~
+3. Dependencies must be manually installed.
+4. No method for alternate forms of screenshots besides physically hardcoding differences in the `pysee.py` file.
+5. Tool must be run from the command-line for each screenshot.
+6. Screenshot mechanism and valid installation checks performed on the command-line via the `subprocess` Python module.
 
 # Plans
 1. Choice of image hosting
    * Allow for user-selection of hosting including by not limited to:
-      * [Imgur](http://imgur.com/)
-      * [Minus](http://minus.com/)
-      * [Photobucket](http://s5.photobucket.com/)
-      * [PostImage](http://postimage.org/)
-      * Possibly my own?
+      * [x] [Imgur](http://imgur.com/)
+      * [ ] [Minus](http://minus.com/)
+      * [ ] [Photobucket](http://s5.photobucket.com/)
+      * [ ] [PostImage](http://postimage.org/)
+      * [ ] Possibly my own?
 2. Wider selection of available screenshot tools
    * Currently, the supported tools are:
       * OSx:
@@ -36,18 +38,22 @@ is return is then sent to the system clipboard.
       * Linux (Ubuntu/Debian):
          1. `gnome-screenshot`
          2. `shutter`
-   * I would like to make this list more encompassing and allow for user-selection + modification (without having to hard-code changes to the `pysee.py` file.
+   * [ ] Expand supported tools
+   * [ ] Allow for user-selection + modification (without having to hard-code changes to the `pysee.py` file.
 3. Custom storage locations and names (patterns or specific names/lists prefixs)
-   * Allow for user-defined path and name for screenshot saving.
+   * [ ] Allow for user-defined path and name for screenshot saving.
 4. GUI implementation
-   * *Move away from command-line startup* and allow for easier usage through a GUI (possibly through `tkinter`?) which allows for "presence" (be a program that can stay running in the background, listening from the next item on the list...
+   * [ ] Move away from command-line startup with GUI implementation
+   * [ ] Allow tool to stay running in the background and listen for hotkeys...
 5. System-wide hotkeys
-   * This is my main gripe with the current implementation... I have to start the damn thing from the terminal. If there was ever a time where I needed to quickly capture something... _it's gone!_ This will change... once I figure out how.
+    * [ ] Custom, cross-platform hotkeys
+    * [ ] GUI or other process that listens for hotkey combinations system-wide
 6. Timer
-   * Allow for a user-set timer to automatically take a screenshot of either an open window, all screens, or region.
-   * Send to image host, FTP, Dropbox/Google Drive, save to specific location, etc..
+   * [ ] Allow for a user-set timer to automatically take a screenshot of either an open window, all screens, or region.
+   * [ ] Send to image host, FTP, Dropbox/Google Drive, save to specific location, etc..
 7. Dedicated website for downloading/tutorials
-   * Move it away from GitHub (beyond hosting of the source)
+   * [ ] Move it away from GitHub (beyond hosting of the source)
+     * [Here's a start.](http://pysee.me/)
 8. Installation via `pip`
    * Easy solution to dependencies issue and would make un/installation cleaner.
 
