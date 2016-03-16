@@ -58,7 +58,7 @@ is return is then sent to the system clipboard.
    * Easy solution to dependencies issue and would make un/installation cleaner.
 
 # Installation
-Download the code as a zip file, extract to a directory, and run the PySee.py script from the terminal with Python3.
+`pip install pysee`
 
 # Uninstallation
-Remove the main PySee/ directory and the hidden .pysee/ directory in your home (~/) directory. There are no other extraneous files.
+`pip uninstall pysee` and remove the hidden .pysee/ directory in your home (~/) directory. There are no other extraneous files.
