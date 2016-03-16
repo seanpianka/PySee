@@ -15,10 +15,10 @@ and is then uploaded anonymously to [Imgur.com](http://imgur.com/) through their
 is return is then sent to the system clipboard.
 
 # Issues
-1. All of the files for the tool must be manually installed.
-   * Main program files
+1. ~~All of the files for the tool must be manually installed.~~
+   * ~~Main program files~~
    * ~~Configuration files~~
-3. Dependencies must be manually installed.
+3. ~~Dependencies must be manually installed.~~
 4. No method for alternate forms of screenshots besides physically hardcoding differences in the `pysee.py` file.
 5. Tool must be run from the command-line for each screenshot.
 6. Screenshot mechanism and valid installation checks performed on the command-line via the `subprocess` Python module.
