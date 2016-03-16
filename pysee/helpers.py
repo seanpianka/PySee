@@ -71,4 +71,4 @@ def init_config(path):
         exit()
 
 if __name__ == "__main__":
-    exit()
+    pass

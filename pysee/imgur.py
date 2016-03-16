@@ -46,4 +46,4 @@ def upload_picture(client, img_paths):
         return None
 
 if __name__ == "__main__":
-    exit()
+    pass
