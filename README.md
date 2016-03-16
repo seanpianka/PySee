@@ -54,8 +54,8 @@ is return is then sent to the system clipboard.
 7. Dedicated website for downloading/tutorials
    * [ ] Move it away from GitHub (beyond hosting of the source)
      * [Here's a start.](http://pysee.me/)
-8. Installation via `pip`
-   * Easy solution to dependencies issue and would make un/installation cleaner.
+8. ~~Installation via `pip`~~
+   * ~~Easy solution to dependencies issue and would make un/installation cleaner.~~
 
 # Installation
 `pip install pysee`
