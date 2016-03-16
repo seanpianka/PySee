@@ -57,5 +57,6 @@ def run():
         print("There was an error when attempting to save or" +
                 "upload the screenshot. Please try again.")
 
+
 if __name__ == "__main__":
     run()

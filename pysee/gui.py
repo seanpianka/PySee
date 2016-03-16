@@ -13,33 +13,34 @@ host to upload to.
 
 """
 import tkinter as tk
-import pysee
+from pysee import run
 
 
 class Application(tk.Frame):
-    def __init__(self, master=None):
-        tk.Frame.__init__(self, master)
-        self.pack()
-        self.createWidgets(master)
+    def __init__(self):
+        self.root = tk.Tk()
+        # self.root.geometry("640x480+8000+750")
+        self.root.title("PySee")
+        
+        # label creation
+        self.lbl_maintitle = tk.Label(self.root, \
+                                      text="PySee, a Lightweight Screenshot Tool")
+        self.lbl_imghosttitle = tk.Label(self.root, \
+                                         text="Select your image host:")
+        self.lbl_configtitle = tk.Label(self.root, \
+                                         text = "Edit your configuration file:")
 
-    def createWidgets(self, master):
-        self.take_screenshot = tk.Button(self)
-        self.take_screenshot["text"] = "Take Screenshot"
-        self.take_screenshot["command"] = pysee.run() 
-        self.take_screenshot.pack(side="top")
+        # packing
+        self.lbl_maintitle.pack()
+        self.lbl_imghosttitle.pack(side="left")
+        self.lbl_configtitle.pack(side="right")
 
-        self.quit = tk.Button(self, text="Quit", fg="red", command=master.destroy)
-        self.quit.pack(side="bottom")
+        # init main loop
+        self.root.mainloop()
 
 
 def main():
-    root = tk.Tk()
-    root.geometry("640x480+8000+750")
-    root.title("PySee - Lightweight Screenshot Tool")
-
-    app = Application(master=root)
-
-    root.mainloop()
+    pysee_gui = Application()
 
 
 if __name__ == '__main__':
