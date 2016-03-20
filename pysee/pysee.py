@@ -17,7 +17,7 @@ import sys
 from subprocess import Popen
 
 import imgur
-import clipboard
+import pyperclip
 from datetime import datetime as dt
 
 from configs import paths as p, check_config
@@ -36,27 +36,26 @@ def screenshot():
     cmd.communicate()
 
     trunc_img_path = img_path.replace(p['imgdir'], '')[:-4]
-    img_paths = {
+    image_paths = {
             'full': img_path,           # Screenshot and absolute path
             'trunc': trunc_img_path     # Screenshot with extension only
     }
-    return img_paths
+    return image_paths
 
 
 def run():
     check_config()
     client = imgur.authenticate_client()
-    screenshot_paths = screenshot()
-    response = imgur.upload_picture(client, screenshot_paths)
+    image_paths = screenshot()
+    response = imgur.upload_picture(client, image_paths)
     if response is not None:
-        print("Successful upload of {}.png!".format(screenshot_paths['trunc']),
+        print("Successful upload of {}.png!".format(image_paths['trunc']),
               "\nYou can find it here: {}".format(response['link']),
           "\nIt has also been copied to your system clipboard (Ctrl+V)")
-        clipboard.copy(response['link'])
+        pyperclip.copy(response['link'])
     else:
         print("There was an error when attempting to save or" +
                 "upload the screenshot. Please try again.")
-
 
 if __name__ == "__main__":
     run()
