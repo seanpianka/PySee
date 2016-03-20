@@ -29,6 +29,7 @@ paths = {}
 
 def check_config():
     paths['confdir'] = os.path.expanduser('~/.pysee/')
+
     if not os.path.exists(paths['confdir']):
         try:
             print("Creating configuration folder...")
@@ -37,6 +38,7 @@ def check_config():
             if e.errno != errno.EEXIST or not os.path.isdir(paths['confdir']):
                 raise
                 exit()
+
     if not os.path.exists(paths['confdir'] + config_file):
         try:
             print("Creating configuration file...")
@@ -46,6 +48,7 @@ def check_config():
             if e.errno != errno.EEXIST:
                 raise
                 exit()
+
     config_ini = helpers.init_config(paths['confdir'] + config_file)
     paths['imgdir'] = os.path.expanduser(config_ini.get('path', 'base_img_path'))
 

@@ -17,7 +17,7 @@ import sys
 from subprocess import Popen
 
 import imgur
-import clipboard
+import pyperclip
 from datetime import datetime as dt
 
 from configs import paths as p, check_config
@@ -52,7 +52,7 @@ def run():
         print("Successful upload of {}.png!".format(screenshot_paths['trunc']),
               "\nYou can find it here: {}".format(response['link']),
           "\nIt has also been copied to your system clipboard (Ctrl+V)")
-        clipboard.copy(response['link'])
+        pyperclip.copy(response['link'])
     else:
         print("There was an error when attempting to save or" +
                 "upload the screenshot. Please try again.")
