@@ -33,17 +33,10 @@ class Application(tk.Frame):
                                 height=100)
         # f_imghost: frame for right side/img host selection
         self.f_imghost = tk.Frame(self.f_master,
-<<<<<<< HEAD
                                   bg='lightsalmon', 
                                   height=400,
                                   width=260)
                                             
-=======
-                                  bg = 'lightsalmon',
-                                  height=200,
-                                  width=260).grid(row=0,
-                                                  column=0)
->>>>>>> de7515b29f5cb02faf0efdafff8643ab007536e9
         # f_config: frame for left side/config editor
         self.f_config = tk.Frame(self.f_master,
                                  bg='purple',
