@@ -46,7 +46,7 @@ setup(
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
-	'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.5',
     ],
 
     # What does your project relate to?
@@ -81,6 +81,10 @@ setup(
     # To provide executable scripts, use entry points in preference to the
     # "scripts" keyword. Entry points provide cross-platform support and allow
     # pip to create the appropriate form of executable for the target platform.
-    entry_points={},
+    entry_points={
+        'console_scripts': [
+            'pysee=pysee.py:main'
+        ]
+    },
 )
 

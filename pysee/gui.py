@@ -13,7 +13,7 @@ host to upload to.
 
 """
 import tkinter as tk
-from pysee import run
+from __main__ import run
 
 
 class Application(tk.Frame):
