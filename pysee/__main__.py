@@ -43,7 +43,7 @@ def screenshot():
     return image_paths
 
 
-def run():
+def main(args=None):
     check_config()
     client = imgur.authenticate_client()
     image_paths = screenshot()
@@ -58,4 +58,4 @@ def run():
                 "upload the screenshot. Please try again.")
 
 if __name__ == "__main__":
-    run()
+    main()
