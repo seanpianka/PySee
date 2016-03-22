@@ -1,4 +1,6 @@
-imgurpython
-clipboard
-datetime
-requests
+DateTime==4.0.1
+imgurpython==1.1.7
+pyperclip==1.5.26
+pytz==2016.1
+requests==2.9.1
+zope.interface==4.1.3
