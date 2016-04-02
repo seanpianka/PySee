@@ -19,7 +19,7 @@ from pysee import main
 class Application(tk.Frame):
     def __init__(self):
         self.root = tk.Tk()
-        self.root.geometry("520x480")
+        self.root.geometry("520x250")
         self.root.title("PySee, a Lightweight Screenshot Tool")
 
         # f_master: frame atop of root
@@ -64,10 +64,10 @@ class Application(tk.Frame):
                                         padx=50)
 
         # option menu
-        self.var = ""
+        self.image_host = tk.StringVar()
+        self.image_host.set("Select Image Host")
         self.optn_imghost = tk.OptionMenu(self.f_imghost,
-                                          self.var, "Select Image Host",
-                                          "Imgur", "Minus",
+                                          self.image_host, "Imgur", "Minus",
                                           "Photobucket", "PostImage")
         self.btn_editconfig = tk.Button(self.f_config,
                                         text="Edit Configuration File")
@@ -75,24 +75,22 @@ class Application(tk.Frame):
                                             text="Take a Screenshot")
 
         # packing
-        self.lbl_maintitle.pack(fill="y")
+        self.lbl_maintitle.pack(fill="y")       # PySee title
 
-        self.lbl_configtitle.pack()
-        self.btn_editconfig.pack(fill="both", expand=True)
+        self.lbl_configtitle.pack()             # Config title
+        self.btn_editconfig.pack(fill="both")   # Edit Config button
 
-        self.lbl_imghosttitle.pack()
-        self.optn_imghost.pack(fill="both", expand=True)
+        self.lbl_imghosttitle.pack()            # Image Host title
+        self.optn_imghost.pack(fill="both")     # Image Host dropdown menu
 
+        self.f_title.pack()                     # Title frame
+        self.btn_takescreenshot.pack()          # Take screenshot button
 
-        self.f_title.pack()
-        self.btn_takescreenshot.pack()
+        self.f_imghost.pack(side='right')       # Image Host frame
+        self.f_config.pack(side='left')         # Edit Config frame
+        self.f_master.pack()                    # Master (atop root) frame
 
-        self.f_imghost.pack()
-        self.f_config.pack(side='left')
-        self.f_master.pack()
-
-        # init main loop
-        self.root.mainloop()
+        self.root.mainloop()                    # init main loop
 
 
 def create_gui():
