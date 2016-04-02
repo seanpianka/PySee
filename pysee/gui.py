@@ -13,7 +13,7 @@ host to upload to.
 
 """
 import tkinter as tk
-from __main__ import run
+from pysee import main
 
 
 class Application(tk.Frame):
@@ -31,12 +31,12 @@ class Application(tk.Frame):
                                 bg='blue',
                                 width=520,
                                 height=100)
+
         # f_imghost: frame for right side/img host selection
         self.f_imghost = tk.Frame(self.f_master,
-                                  bg='lightsalmon', 
+                                  bg='lightsalmon',
                                   height=400,
                                   width=260)
-                                            
         # f_config: frame for left side/config editor
         self.f_config = tk.Frame(self.f_master,
                                  bg='purple',
@@ -69,15 +69,16 @@ class Application(tk.Frame):
 
         self.f_title.pack(expand=True, side='top')
         self.f_imghost.pack(expand=True)
-        self.f_config.pack(eexpand=Truexpand=True, side='left')
+        self.f_config.pack(expand=True, side='left')
         self.f_master.pack()
+
         # init main loop
         self.root.mainloop()
 
 
-def main():
+def create_gui():
     pysee_gui = Application()
 
 
 if __name__ == '__main__':
-    main()
+    create_gui()
