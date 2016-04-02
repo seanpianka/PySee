@@ -19,7 +19,7 @@ from pysee import main
 class Application(tk.Frame):
     def __init__(self):
         self.root = tk.Tk()
-        self.root.geometry("520x480+8000+750")
+        self.root.geometry("520x480")
         self.root.title("PySee, a Lightweight Screenshot Tool")
 
         # f_master: frame atop of root
@@ -63,13 +63,32 @@ class Application(tk.Frame):
                                         pady=10,
                                         padx=50)
 
-        self.lbl_maintitle.pack(expand=True, side='top')
-        self.lbl_imghosttitle.pack(expand=True, side='right')
-        self.lbl_configtitle.pack(expand=True, side='left')
+        # option menu
+        self.var = ""
+        self.optn_imghost = tk.OptionMenu(self.f_imghost,
+                                          self.var, "Select Image Host",
+                                          "Imgur", "Minus",
+                                          "Photobucket", "PostImage")
+        self.btn_editconfig = tk.Button(self.f_config,
+                                        text="Edit Configuration File")
+        self.btn_takescreenshot = tk.Button(self.f_master,
+                                            text="Take a Screenshot")
 
-        self.f_title.pack(expand=True, side='top')
-        self.f_imghost.pack(expand=True)
-        self.f_config.pack(expand=True, side='left')
+        # packing
+        self.lbl_maintitle.pack(fill="y")
+
+        self.lbl_configtitle.pack()
+        self.btn_editconfig.pack(fill="both", expand=True)
+
+        self.lbl_imghosttitle.pack()
+        self.optn_imghost.pack(fill="both", expand=True)
+
+
+        self.f_title.pack()
+        self.btn_takescreenshot.pack()
+
+        self.f_imghost.pack()
+        self.f_config.pack(side='left')
         self.f_master.pack()
 
         # init main loop
