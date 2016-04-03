@@ -8,7 +8,7 @@ class Application(Frame):
 
         for r in range(6):
             self.master.rowconfigure(r, weight=1)
-        for c in range(3):
+        for c in range(5):
             self.master.columnconfigure(c, weight=1)
             Button(master, text="Button {0}".format(c)).grid(row=6,column=c,sticky=E+W)
 
