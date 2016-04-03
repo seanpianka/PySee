@@ -13,9 +13,11 @@ host to upload to.
 
 """
 import tkinter as tk
+
 from pysee import main
+from helpers import edit_text 
 
-
+ 
 class Application(tk.Frame):
     def __init__(self, master=None):
         tk.Frame.__init__(self, master)
@@ -46,7 +48,8 @@ class Application(tk.Frame):
                                           self.image_host, "Imgur", "Minus",
                                           "Photobucket", "PostImage")
         self.btn_editconfig = tk.Button(self.f_config,
-                                        text="Edit Configuration File")
+                                        text="Edit Configuration File",
+                                        command=edit_text("~/.pysee/config.ini"))
         self.btn_takescreenshot = tk.Button(self.f_main,
                                             text="Take a Screenshot",
                                             command=main)
@@ -55,15 +58,16 @@ class Application(tk.Frame):
         self.lbl_maintitle.pack(fill="x")       # PySee title
 
         self.lbl_configtitle.pack()             # Config title
-        self.btn_editconfig.pack()   # Edit Config button
+        self.btn_editconfig.pack()              # Edit Config button
 
         self.lbl_imghosttitle.pack()            # Image Host title
-        self.optn_imghost.pack()     # Image Host dropdown menu
+        self.optn_imghost.pack()                # Image Host dropdown menu
 
         self.btn_takescreenshot.pack()          # Take screenshot button
-        self.f_main.pack()                     # Title frame
-        self.f_imghost.pack()       # Image Host frame
-        self.f_config.pack()        # Edit Config frame
+
+        self.f_main.pack()                      # Title frame
+        self.f_imghost.pack()                   # Image Host frame
+        self.f_config.pack()                    # Edit Config frame
 
 
 def create_gui():
