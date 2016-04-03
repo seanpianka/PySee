@@ -68,7 +68,7 @@ class Application(tk.Frame):
 
 def create_gui():
     root = tk.Tk()
-    root.geometry("300x400")
+    root.geometry("300x280")
     root.title("PySee, a Lightweight Screenshot Tool")
     pysee_gui = Application(master=root)
     pysee_gui.mainloop()
