@@ -81,5 +81,6 @@ def init_config(path):
         print("There was an error reading the .ini file: ", e)
         exit()
 
+
 if __name__ == "__main__":
     pass

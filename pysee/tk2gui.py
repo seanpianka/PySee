@@ -23,7 +23,6 @@ class Application(tk.Frame):
         tk.Frame.__init__(self, master)
         self.master.title("PySee, a Lightweight Screenshot Tool")
 
-
         self.f_main = tk.Frame(master)
         self.f_imghost = tk.Frame(master)
         self.f_config = tk.Frame(master)
@@ -48,7 +47,11 @@ class Application(tk.Frame):
                                       command=lambda:edit_text("~/.pysee/config.ini"))
         self.btn_takescreenshot = tk.Button(self.f_main,
                                             text="Take a Screenshot",
-                                            command=lambda:main(root=master))
+                                            command=main)
+
+        # binding keys
+        self.btn_takescreenshot.bind('<Return>', main)
+        self.btn_takescreenshot.bind('<space>', main)
 
         # packing
         self.lbl_maintitle.pack(fill="x")       # PySee title
