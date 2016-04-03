@@ -43,16 +43,16 @@ def take_screenshot():
     return image_paths
 
 
-def main():
+def main(event=None):
     check_config()
     client = imgur.authenticate_client()
     image_paths = take_screenshot()
     response = imgur.upload_picture(client, image_paths)
     if response is not None:
+        pyperclip.copy(response['link'])
         print("Successful upload of {}.png!".format(image_paths['trunc']),
               "\nYou can find it here: {}".format(response['link']),
           "\nIt has also been copied to your system clipboard (Ctrl+V)")
-        pyperclip.copy(response['link'])
     else:
         print("There was an error when attempting to save or" +
                 "upload the screenshot. Please try again.")
