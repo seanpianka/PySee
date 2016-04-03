@@ -26,7 +26,6 @@ class Application(tk.Frame):
         self.f_imghost = tk.Frame(master)
         self.f_config = tk.Frame(master)
 
-
         # label creation
         self.lbl_maintitle = tk.Label(self.f_main, \
                                       text="PySee",
@@ -48,11 +47,15 @@ class Application(tk.Frame):
                                           self.image_host, "Imgur", "Minus",
                                           "Photobucket", "PostImage")
         self.btn_editconfig = tk.Button(self.f_config,
-                                        text="Edit Configuration File",
-                                        command=edit_text("~/.pysee/config.ini"))
+                                      text="Edit Configuration File",
+                                      command=lambda:edit_text("~/.pysee/config.ini"))
         self.btn_takescreenshot = tk.Button(self.f_main,
                                             text="Take a Screenshot",
                                             command=main)
+        
+        # binding keys
+        self.btn_takescreenshot.bind('<Return>', main)
+        self.btn_takescreenshot.bind('<space>', main)
 
         # packing
         self.lbl_maintitle.pack(fill="x")       # PySee title
