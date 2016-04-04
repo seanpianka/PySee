@@ -9,14 +9,17 @@ are located within the user's home directory.
 :author: Sean Pianka <me@seanpianka.com>
 :copyright: Copyright 2016 Sean Pianka
 :license: None
-
 """
+
 import os
+import sys
 
 import pyperclip
 
-import helpers
+from helpers import init_config
 
+config_file = 'config.ini'
+paths = {}
 base_config_file_test = """[Imgur_API]
 client_id=YOUR_ID_HERE
 client_secret=YOUR_SECRET_HERE
@@ -25,9 +28,7 @@ refresh_token=
 [path]
 config_path=~/.pysee/
 base_img_path=~/Pictures/"""
-config_file = 'config.ini'
 
-paths = {}
 
 def verify_configuration():
     paths['configdir'] = os.path.expanduser('~/.pysee/')
@@ -50,19 +51,19 @@ def verify_configuration():
                 raise
                 exit()
 
-    config_ini = helpers.init_config(paths['configdir'] + config_file)
-    paths['imgdir'] = os.path.expanduser(config_ini.get('path', 'base_img_path')) 
+    config_ini = init_config(paths['configdir'] + config_file)
+    paths['imgdir'] = os.path.expanduser(config_ini.get('path', 'base_img_path'))
 
-    # testing for installed copy/paste mechanism
     try:
         pyperclip.copy('')
     except pyperclip.exceptions.PyperclipException:
-        print("ERROR: Unable to locate copy/paste mechanism for your system.\n" + \
-                "Considering perform one of the following commands:\n" + \
-                "\t'sudo apt-get install xsel'\n" + \
-                "\t'sudo apt-get install xclip'\n" + \
-                "")
-        exit()
+        print("ERROR: Unable to locate copy/paste mechanism for your system.\n" +
+              "Considering perform one of the following commands:\n" +
+              "\t'sudo apt-get install xsel'\n" +
+              "\t'sudo apt-get install xclip'\n")
+        sys.exit(3)
+
+    return None
 
 
 if __name__ == "__main__":
