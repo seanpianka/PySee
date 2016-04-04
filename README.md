@@ -3,7 +3,9 @@
 ## Synopsis
 A `lightweight screenshot tool` for `GNU/Linux` and `Mac OS X`, built in `Python 3`, with automatic `image host uploading` and `system clipboard copying`.
 
-![PySee Tool Picture](https://i.imgur.com/cgwS67K.png)
+<p align="center">
+    <img src="https://i.imgur.com/cgwS67K.png" alt="A screenshot showing PySee">
+</p>
 
 ## Motivation
 I have found no suitable screenshot tools for GNU/Linux or OSX that are simple (yet customizable), lightweight, and perform similarly across platforms. I hope to develop a tool that satisfies all three desires: **PySee**
