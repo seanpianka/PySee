@@ -1,7 +1,7 @@
 # PySee - A Lightweight Screenshot Tool
 ---
 ## Synopsis
-A `lightweight screenshot tool` for `Linux`* and `Mac OS X`*, built in `Python 3`, with automatic `image host uploading` and `system clipboard copying`.
+A `lightweight screenshot tool` for `Linux` and `Mac OS X`, built in `Python 3`, with automatic `image host uploading` and `system clipboard copying`.
 
 ![PySee Tool Picture](https://i.imgur.com/cgwS67K.png)
 
