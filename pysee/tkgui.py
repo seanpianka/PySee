@@ -12,6 +12,8 @@ host to upload to.
 :license: None
 """
 
+import sys
+
 import tkinter as tk
 from tkinter import Button, Label, Frame, OptionMenu, StringVar
 
@@ -54,7 +56,6 @@ class Application(tk.Frame):
                                       take_screenshot(root=master,
                                                       image_host="I",
                                                       clipboard=True))
-
         # packing
         self.lbl_main.pack(fill="x")  # PySee title
 
@@ -72,11 +73,14 @@ class Application(tk.Frame):
 
 
 def create_gui():
-    root = tk.Tk()
-    root.geometry("300x280")
-    root.resizable(width=False, height=False)
-    pysee_gui = Application(master=root)
-    pysee_gui.mainloop()
+    try:
+        root = tk.Tk()
+        root.geometry("300x280")
+        root.resizable(width=False, height=False)
+        pysee_gui = Application(master=root)
+        pysee_gui.mainloop()
+    except:
+        sys.exit(5)
 
 
 if __name__ == '__main__':
