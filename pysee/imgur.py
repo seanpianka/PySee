@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 """
 imgur
 ~~~~~
@@ -11,8 +10,8 @@ anonimized image-file uploading to Imgur.
 :license: None
 
 .. seealso:: https://api.imgur.com/
-
 """
+
 import os
 
 import requests
@@ -46,11 +45,8 @@ def upload_picture(image_path):
 
     print('Uploading screenshot...')
     try:
-        response = client.upload_from_path(image_path['path'],
-                                           config=upload_json,
-                                           anon=True)
+        return client.upload_from_path(image_path['path'],
+                                       config=upload_json,
+                                       anon=True)
     except:
         return None
-
-if __name__ == "__main__":
-    pass
