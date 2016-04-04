@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 """
 helpers
 ~~~~~~~
@@ -9,9 +8,10 @@ used in this project.
 
 :author: Sean Pianka <me@seanpianka.com>
 :license: None
-
 """
+
 import os
+import sys
 from collections import namedtuple, OrderedDict
 from distutils.spawn import find_executable
 
@@ -24,6 +24,7 @@ def edit_text(filename):
             os.system("nano " + filename)
         except:
             os.system("vi " + filename)
+    return None
 
 
 def create_tool(name, command, area, window, full, filename):
@@ -79,8 +80,4 @@ def init_config(path):
         return config
     except helpers.ConfigParser.NoSectionError as e:
         print("There was an error reading the .ini file: ", e)
-        exit()
-
-
-if __name__ == "__main__":
-    pass
+        sys.exit(4)
