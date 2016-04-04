@@ -11,14 +11,13 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # http://packaging.python.org/en/latest/tutorial.html#version
-    version='1.2.1',
+    version='2.1',
 
     description='Lightweight Python screenshot tool for Linux and Mac OSX',
     long_description='',
 
     # The project's main homepage.
-    url='https://github.com/seanpianka/PySee',
-
+    url='http://pysee.me/',
     # Author details
     author='Sean Pianka',
     author_email='me@seanpianka.com',
@@ -83,8 +82,7 @@ setup(
     # pip to create the appropriate form of executable for the target platform.
     entry_points={
         'console_scripts': [
-            'pysee=pysee.py:main'
+            'pysee=pysee.py:take_screenshot'
         ]
     },
 )
-
