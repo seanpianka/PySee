@@ -19,7 +19,7 @@ A `lightweight screenshot tool` for `Linux`* and `Mac OS X`*, built in `Python 3
 After opening the graphical user interface, select your image host (default is to locally save screenshots), edit the configuration file (optional, auto-generated version will suffice for uploading to [imgur.com](https://imgur.com/)), and take a screenshot! If the screenshot is uploaded to a image host, the URL to the image will be copied to the system clipboard (unless disabled).
 
 ## Code Example
-```
+```python
     >>> from pysee import take_screenshot
     >>> take_screenshot(image_host="Imgur", clipboard=True, output=True)
     Uploading screenshot...                                # screenshot name format: 
