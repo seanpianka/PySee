@@ -24,7 +24,7 @@ import uploads_im
 from configs import paths as p, verify_configuration
 from helpers import find_screenshot_tool
 
-error_msg = "There was an error when attempting to save" + \
+error_msg = "There was an error when attempting to save " + \
             "or upload the screenshot. Please try again."
 
 
@@ -45,14 +45,19 @@ def capture_screenshot(tool, image_path):
 
 
 def upload_screenshot(image_host, image_path):
-    if image_host is "Imgur" or image_host is "I":
-        response = imgur.upload_picture(image_path)
-        image_url = response['link']
-    elif image_host is "Uploads" or image_host is "U":
-        response = uploads_im.upload_picture(image_path)
-        image_url = response['img_url']
+    try:
+        if image_host is "Imgur" or image_host is "I":
+            response = imgur.upload_picture(image_path)
+            image_url = response['link']
+        elif image_host is "Uploads" or image_host is "U":
+            response = uploads_im.upload_picture(image_path)
+            image_url = response['img_url']
 
-    return image_url
+        return image_url
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except:
+        return None
 
 
 def take_screenshot(event=None, root=None, image_host="U"):
