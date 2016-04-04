@@ -64,7 +64,6 @@ I have found no suitable screenshot tools for GNU/Linux or OSX that are simple (
 ## Installation
 
 .. code-block:: bash
-
     $ pip install pysee
     ✨🍰✨
 
@@ -73,7 +72,6 @@ Per [`pyperclip`](https://github.com/asweigart/pyperclip) module documentation:
 
 ## Uninstallation
 .. code-block:: bash
-
     $ pip uninstall pysee
     
 and remove the hidden `~/.pysee/` directory in your home (~/) directory. There are no other extraneous files.
