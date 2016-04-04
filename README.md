@@ -24,7 +24,7 @@ After opening the graphical user interface, select your image host (default is t
     >>> take_screenshot(image_host="Imgur", clipboard=True, output=True)
     Uploading screenshot...                                # screenshot name format: 
     Successful upload of 2016-04-03-21-33-45.png!          # year, month, day, hour, minute seconds
-    You can find it here: http://i.imgur.com/RIntAoK.png   # direct URL to hosted image
+    You can find it here: https://i.imgur.com/cgwS67K.png  # direct URL to hosted image
                                                            # output shown determined by "output" arg
     It has also been copied to your system clipboard.      # copying determined by "clipboard" arg
     True                                                   # returns True on successful upload
