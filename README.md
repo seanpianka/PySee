@@ -5,11 +5,24 @@ A `lightweight screenshot tool` for `Linux` and `Mac OS X`, built in `Python 3`,
 
 ![PySee Tool Picture](https://i.imgur.com/cgwS67K.png)
 
+## Motivation
+I have found no suitable screenshot tools for GNU/Linux or OSX that are simple (yet customizable), lightweight, and perform similarly across platforms. I hope to develop a tool that satisfies all three desires: **PySee**
+
 #### Requires
 * datetime
 * imgurpython
 * pyperclip
 * requests
+
+## Installation
+```bash
+    $ pip install pysee
+    ✨🍰✨
+```
+**NOTE:** The package is currently hidden from PyPi (Python Package Index, the location that pip installation draws packages from) while the graphical user interface is being updated.
+
+Per [`pyperclip`](https://github.com/asweigart/pyperclip) module documentation:
+> On Linux, this module makes use of the `xclip` or `xsel` commands, which should come with the os. Otherwise run "`sudo apt-get install xclip`" or "`sudo apt-get install xsel`" (Note: `xsel` does not always seem to work.)
 
 ## Usage
 ```bash
@@ -29,9 +42,6 @@ After opening the graphical user interface, select your image host (default is t
     It has also been copied to your system clipboard.      # copying determined by "clipboard" arg
     True                                                   # returns True on successful upload
 ```
-
-## Motivation
-I have found no suitable screenshot tools for GNU/Linux or OSX that are simple (yet customizable), lightweight, and perform similarly across platforms. I hope to develop a tool that satisfies all three desires: **PySee**
 
 ## Planned Updates
 1. Choice of image hosting
@@ -61,15 +71,6 @@ I have found no suitable screenshot tools for GNU/Linux or OSX that are simple (
 7. Dedicated website for tool
    * [x] Move it away from GitHub (beyond hosting of the source) -- [Here's a start.](http://pysee.me/)
 
-## Installation
-```bash
-    $ pip install pysee
-    ✨🍰✨
-```
-**NOTE:** The package is currently hidden from PyPi (Python Package Index, the location that pip installation draws packages from) while the graphical user interface is being updated.
-
-Per [`pyperclip`](https://github.com/asweigart/pyperclip) module documentation:
-> On Linux, this module makes use of the `xclip` or `xsel` commands, which should come with the os. Otherwise run "`sudo apt-get install xclip`" or "`sudo apt-get install xsel`" (Note: `xsel` does not always seem to work.)
 
 ## Uninstallation
 ```bash
