@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 """
 imgur
 ~~~~~
@@ -11,8 +10,8 @@ anonimized image-file uploading to Imgur.
 :license: None
 
 .. seealso:: https://api.imgur.com/
-
 """
+
 import os
 
 import requests
@@ -25,25 +24,29 @@ from configs import paths as p
 
 
 def authenticate_client():
-    config_ini = helpers.init_config(p['confdir'] + 'config.ini')
-    client_id = config_ini.get('credentials', 'client_id')
-    client_secret = config_ini.get('credentials', 'client_secret')
+    configuration_file = p['configdir'] + 'config.ini'
+
+    config_ini = helpers.init_config(configuration_file)
+    client_id = config_ini.get('Imgur_API', 'client_id')
+    client_secret = config_ini.get('Imgur_API', 'client_secret')
+
     return ImgurClient(client_id, client_secret)
 
 
-def upload_picture(client, img_paths):
-    print('Uploading screenshot...')
+def upload_picture(image_path):
+    client = authenticate_client()
 
-    conf = {
+    upload_json = {
         'album': None,
-        'name': img_paths['trunc'],
+        'name': image_path['name'],
         'title': None,
-        'description': 'Screenshot taken via PySee v1.0'
+        'description': 'Screenshot taken via PySee'
     }
+
+    print('Uploading screenshot...')
     try:
-        return client.upload_from_path(img_paths['full'], config=conf, anon=True)
+        return client.upload_from_path(image_path['path'],
+                                       config=upload_json,
+                                       anon=True)
     except:
         return None
-
-if __name__ == "__main__":
-    exit()
