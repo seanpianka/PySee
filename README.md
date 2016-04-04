@@ -63,7 +63,7 @@ I have found no suitable screenshot tools for GNU/Linux or OSX that are simple (
 
 ## Installation
 ```bash
-    $ ~pip install pysee~
+    $ ~~pip install pysee~~
     ✨🍰✨
 ```
 The package is currently hidden while the graphical user interface is being updated.
