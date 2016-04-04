@@ -62,7 +62,7 @@ def upload_screenshot(image_host, image_path):
         return None
 
 
-def take_screenshot(event=None, root=None, 
+def take_screenshot(event=None, root=None,
                     image_host="U", clipboard=True, output=True):
     verify_configuration()
 
