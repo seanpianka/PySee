@@ -52,6 +52,8 @@ def upload_screenshot(image_host, image_path):
         elif image_host is "Uploads" or image_host is "U":
             response = uploads_im.upload_picture(image_path)
             image_url = response['img_url']
+        elif image_host is None or image_host is 0:
+            image_url = 0
 
         return image_url
     except (KeyboardInterrupt, SystemExit):
@@ -60,7 +62,7 @@ def upload_screenshot(image_host, image_path):
         return None
 
 
-def take_screenshot(event=None, root=None, image_host="U"):
+def take_screenshot(event=None, root=None, image_host="U", clipboard=True):
     verify_configuration()
 
     screenshot_tool = find_screenshot_tool()
@@ -69,11 +71,17 @@ def take_screenshot(event=None, root=None, image_host="U"):
     image_url = upload_screenshot(image_host, image_path)
 
     if image_url is not None and image_url is not "":
-        pyperclip.copy(image_url)
-        print("Successful upload of {}.png!".format(image_path['name']),
-              "\nYou can find it here: {}".format(image_url),
-              "\nIt has also been copied to your system clipboard.")
-        upload_success = True
+        if image_url is 0:
+            print("Successful screenshot!" + \
+                  "{} was saved locally.".format(image_path['path']))
+            image_url = image_path['path']
+        else:
+            print("Successful upload of {}.png!".format(image_path['name']),
+                  "\nYou can find it here: {}".format(image_url))
+            upload_success = True
+        if clipboard is True:
+            pyperclip.copy(image_url)
+            print("\nIt has also been copied to your system clipboard.")
     else:
         upload_success = False
         print(error_msg)
