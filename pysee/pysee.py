@@ -95,6 +95,9 @@ def take_screenshot(event=None, root=None,
         if output is True:
             print(error_msg)
 
+    while True:
+        pass
+
     return upload_success
 
 
