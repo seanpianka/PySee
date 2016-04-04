@@ -55,7 +55,7 @@ def verify_configuration():
     paths['imgdir'] = os.path.expanduser(config_ini.get('path', 'base_img_path'))
 
     try:
-        pyperclip.copy('')
+        pyperclip.copy('0')
     except pyperclip.exceptions.PyperclipException:
         print("ERROR: Unable to locate copy/paste mechanism for your system.\n" +
               "Considering perform one of the following commands:\n" +

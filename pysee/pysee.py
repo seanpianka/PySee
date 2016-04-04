@@ -14,6 +14,7 @@ Imgur uploading and system clipboard copying.
 import os
 import errno
 import sys
+import atexit
 from subprocess import Popen, PIPE, STDOUT
 
 import pyperclip
@@ -37,9 +38,7 @@ def capture_screenshot(tool, image_path):
                 shell=True,
                 stdout=PIPE, stdin=PIPE, stderr=PIPE)
     img_path = p['imgdir'] + dt.now().strftime(time_format) + '.png'
-    output = cmd.communicate()
-    cmd.wait()
-    print(output)
+    cmd.communicate()
 
     img_name = img_path.replace(p['imgdir'], '')[:-4]
     image_path['path'] = img_path  # absolute path of screenshot
