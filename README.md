@@ -15,12 +15,10 @@ A `lightweight screenshot tool` for `Linux`* and `Mac OS X`*, built in `Python 3
 .. code-block:: bash
 
     $ pysee
-
 Upon opening the graphical user interface, select your image host (default is to locally save screenshots), edit the configuration file (optional, auto-generated version will suffice for uploading to [imgur.com](https://imgur.com/)), and take a screenshot! If the screenshot is uploaded to a image host, the URL to the image will be copied to the system clipboard (unless disabled).
 
 ## Code Example
 .. code-block:: python
-
     >>> from pysee import take_screenshot
     >>> take_screenshot(image_host="Imgur", clipboard=True, output=True)
     Uploading screenshot...                                # screenshot name format: 
@@ -33,7 +31,7 @@ Upon opening the graphical user interface, select your image host (default is to
 ## Motivation
 I have found no suitable screenshot tools for GNU/Linux or OSX that are simple (yet customizable), lightweight, and perform similarly across platforms. I hope to develop a tool that satisfies all three desires: **PySee**
 
-## Plans
+## Planned Updates
 1. Choice of image hosting
    * Allow for user-selection of hosting including by not limited to:
       * [x] [Imgur](https://imgur.com/)
@@ -62,7 +60,6 @@ I have found no suitable screenshot tools for GNU/Linux or OSX that are simple (
    * [x] Move it away from GitHub (beyond hosting of the source) -- [Here's a start.](http://pysee.me/)
 
 ## Installation
-
 .. code-block:: bash
     $ pip install pysee
     ✨🍰✨
