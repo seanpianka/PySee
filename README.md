@@ -66,7 +66,7 @@ I have found no suitable screenshot tools for GNU/Linux or OSX that are simple (
     $ pip install pysee
     ✨🍰✨
 ```
-**NOTE:** The package is currently hidden while the graphical user interface is being updated.
+**NOTE:** The package is currently hidden from PyPi (Python Package Index, the location that pip installation draws packages from) while the graphical user interface is being updated.
 
 Per [`pyperclip`](https://github.com/asweigart/pyperclip) module documentation:
 > On Linux, this module makes use of the `xclip` or `xsel` commands, which should come with the os. Otherwise run "`sudo apt-get install xclip`" or "`sudo apt-get install xsel`" (Note: `xsel` does not always seem to work.)
