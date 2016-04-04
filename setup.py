@@ -11,7 +11,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # http://packaging.python.org/en/latest/tutorial.html#version
-    version='1.1.1',
+    version='1.2.1',
 
     description='Lightweight Python screenshot tool for Linux and Mac OSX',
     long_description='',
@@ -42,12 +42,11 @@ setup(
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
-	'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.5',
     ],
 
     # What does your project relate to?
@@ -82,6 +81,10 @@ setup(
     # To provide executable scripts, use entry points in preference to the
     # "scripts" keyword. Entry points provide cross-platform support and allow
     # pip to create the appropriate form of executable for the target platform.
-    entry_points={},
+    entry_points={
+        'console_scripts': [
+            'pysee=pysee.py:main'
+        ]
+    },
 )
 

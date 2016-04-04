@@ -1,18 +1,30 @@
-#!/usr/bin/python3
 """
 helpers
 ~~~~~~~
 
-Code provided by http://github.com/imgur/imgurpython examples
-Script "helps ease issues between Python 2 and 3"
+Helper functions designed to increase readability
+and separate responsbility from the various scripts
+used in this project.
 
-:author: Jacob Greenleaf <api@imgur.com>
-
-.. seealso:: http://github.com/Imgur/imgurpython/
-
+:author: Sean Pianka <me@seanpianka.com>
+:license: None
 """
+
+import os
+import sys
 from collections import namedtuple, OrderedDict
 from distutils.spawn import find_executable
+
+
+def edit_text(filename):
+    if os.getenv('EDITOR') is not None:
+        os.system("$EDITOR " + filename)
+    else:
+        try:
+            os.system("nano " + filename)
+        except:
+            os.system("vi " + filename)
+    return None
 
 
 def create_tool(name, command, area, window, full, filename):
@@ -68,7 +80,4 @@ def init_config(path):
         return config
     except helpers.ConfigParser.NoSectionError as e:
         print("There was an error reading the .ini file: ", e)
-        exit()
-
-if __name__ == "__main__":
-    exit()
+        sys.exit(4)
