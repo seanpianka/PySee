@@ -1,7 +1,7 @@
 # PySee - A Lightweight Screenshot Tool
 ---
 ## Synopsis
-A `lightweight screenshot tool` for `Linux`* and `Mac OS X`*, built in `Python 3`, with automatic `image host uploading` and `system clipboard copying`.
+A `lightweight screenshot tool` for `Linux` and `Mac OS X`, built in `Python 3`, with automatic `image host uploading` and `system clipboard copying`.
 
 ![PySee Tool Picture](https://i.imgur.com/cgwS67K.png)
 
@@ -66,6 +66,7 @@ I have found no suitable screenshot tools for GNU/Linux or OSX that are simple (
     $ pip install pysee
     ✨🍰✨
 ```
+**NOTE:** The package is currently hidden from PyPi (Python Package Index, the location that pip installation draws packages from) while the graphical user interface is being updated.
 
 Per [`pyperclip`](https://github.com/asweigart/pyperclip) module documentation:
 > On Linux, this module makes use of the `xclip` or `xsel` commands, which should come with the os. Otherwise run "`sudo apt-get install xclip`" or "`sudo apt-get install xsel`" (Note: `xsel` does not always seem to work.)
