@@ -14,7 +14,7 @@ Imgur uploading and system clipboard copying.
 import os
 import errno
 import sys
-from subprocess import Popen
+from subprocess import Popen, PIPE, STDOUT
 
 import pyperclip
 import imgur
@@ -33,9 +33,13 @@ def capture_screenshot(tool, image_path):
 
     command = tool.command + ' ' + tool.area + ' ' + tool.filename + ' '
     command += p['imgdir'] + '{}.png 2>/dev/null'
-    cmd = Popen([command.format(dt.now().strftime(time_format))], shell=True)
+    cmd = Popen([command.format(dt.now().strftime(time_format))],
+                shell=True,
+                stdout=PIPE, stdin=PIPE, stderr=PIPE)
     img_path = p['imgdir'] + dt.now().strftime(time_format) + '.png'
-    cmd.communicate()
+    output = cmd.communicate()
+    cmd.wait()
+    print(output)
 
     img_name = img_path.replace(p['imgdir'], '')[:-4]
     image_path['path'] = img_path  # absolute path of screenshot
@@ -62,6 +66,7 @@ def upload_screenshot(image_host, image_path):
         return None
 
 
+# the default image_host="" should be "U", not "I"
 def take_screenshot(event=None, root=None,
                     image_host="U", clipboard=True, output=True):
     verify_configuration()
@@ -80,7 +85,7 @@ def take_screenshot(event=None, root=None,
         else:
             if output is True:
                 print("Successful upload of {}.png!".format(image_path['name']),
-                  "\nYou can find it here: {}".format(image_url))
+                      "\nYou can find it here: {}".format(image_url))
             upload_success = True
         if clipboard is True:
             pyperclip.copy(image_url)
