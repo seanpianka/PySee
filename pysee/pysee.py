@@ -62,7 +62,8 @@ def upload_screenshot(image_host, image_path):
         return None
 
 
-def take_screenshot(event=None, root=None, image_host="U", clipboard=True):
+def take_screenshot(event=None, root=None, 
+                    image_host="U", clipboard=True, output=True):
     verify_configuration()
 
     screenshot_tool = find_screenshot_tool()
@@ -72,19 +73,23 @@ def take_screenshot(event=None, root=None, image_host="U", clipboard=True):
 
     if image_url is not None and image_url is not "":
         if image_url is 0:
-            print("Successful screenshot!" + \
-                  "{} was saved locally.".format(image_path['path']))
+            if output is True:
+                print("Successful screenshot!" + \
+                      "{} was saved locally.".format(image_path['path']))
             image_url = image_path['path']
         else:
-            print("Successful upload of {}.png!".format(image_path['name']),
+            if output is True:
+                print("Successful upload of {}.png!".format(image_path['name']),
                   "\nYou can find it here: {}".format(image_url))
             upload_success = True
         if clipboard is True:
             pyperclip.copy(image_url)
-            print("\nIt has also been copied to your system clipboard.")
+            if output is True:
+                print("\nIt has also been copied to your system clipboard.")
     else:
         upload_success = False
-        print(error_msg)
+        if output is True:
+            print(error_msg)
 
     return upload_success
 
