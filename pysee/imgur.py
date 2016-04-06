@@ -17,6 +17,7 @@ import os
 import requests
 import json
 from imgurpython import ImgurClient
+from imgurpython.helpers.error import ImgurClientError
 from datetime import datetime
 
 import helpers
@@ -48,5 +49,6 @@ def upload_picture(image_path):
         return client.upload_from_path(image_path['path'],
                                        config=upload_json,
                                        anon=True)
-    except:
+    except helpers.error.ImgurClientError:
+        print("There was an error validating your API keys for imgur.com. Go to https://api.imgur.com/oauth2/addclient to receive your own API keys.\n")
         return None
