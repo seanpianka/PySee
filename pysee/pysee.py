@@ -60,14 +60,13 @@ def upload_screenshot(image_host, image_path):
 
         return image_url
     except (KeyboardInterrupt, SystemExit):
-        raise
-    except:
+        print("Interrupt detected, aborting.\n")
         return None
 
 
 # the default image_host="" should be "U", not "I"
 def take_screenshot(event=None, root=None,
-                    image_host="U", clipboard=True, output=True):
+                    image_host="I", clipboard=True, output=True):
     verify_configuration()
 
     screenshot_tool = find_screenshot_tool()
@@ -91,12 +90,13 @@ def take_screenshot(event=None, root=None,
             if output is True:
                 print("\nIt has also been copied to your system clipboard.")
     else:
+        print("entered")
         upload_success = False
         if output is True:
             print(error_msg)
 
-    while True:
-        pass
+    #while True:
+    #    pass
 
     return upload_success
 
