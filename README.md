@@ -28,9 +28,18 @@ Per [`pyperclip`](https://github.com/asweigart/pyperclip) module documentation:
 
 ## Usage
 ```bash
-    $ pysee
+    $ pysee [OPTIONS]
+    or
+    $ pysee-gui
 ```
-
+Options:
+  * -w --window
+  * -r --region
+  * -f --full-area
+  * -u --no-upload
+  * -o --no-output
+  * -h --help
+  
 After opening the graphical user interface, select your image host (default is to locally save screenshots), edit the configuration file (optional, auto-generated version will suffice for uploading to [imgur.com](https://imgur.com/)), and take a screenshot! If the screenshot is uploaded to a image host, the URL to the image will be copied to the system clipboard (unless disabled).
 
 ## Code Example
@@ -72,6 +81,8 @@ After opening the graphical user interface, select your image host (default is t
    * [ ] Send to image host, FTP, Dropbox/Google Drive, save to specific location, etc..
 7. Dedicated website for tool
    * [x] Move it away from GitHub (beyond hosting of the source) -- [Here's a start.](http://pysee.me/)
+8. Command-line Arguments
+   * [ ] Add command-line arguments + associated options.
 
 
 ## Uninstallation
