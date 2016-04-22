@@ -11,8 +11,8 @@ anonimized image-file uploading to Imgur.
 
 .. seealso:: https://api.imgur.com/
 """
-
 import os
+import sys
 
 import requests
 import json
@@ -49,6 +49,8 @@ def upload_picture(image_path):
         return client.upload_from_path(image_path['path'],
                                        config=upload_json,
                                        anon=True)
-    except helpers.error.ImgurClientError:
-        print("There was an error validating your API keys for imgur.com. Go to https://api.imgur.com/oauth2/addclient to receive your own API keys.\n")
+    except FileNotFoundError as e:
+        print("There was an error validating your API keys for imgur.com.\n"
+              "Go to https://api.imgur.com/oauth2/addclient to receive your own API keys.\n"
+              "Error: ", e, "\n")
         return None

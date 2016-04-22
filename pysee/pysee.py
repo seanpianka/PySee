@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 """
 PySee
 ~~~~~
@@ -15,6 +15,7 @@ import os
 import errno
 import sys
 import atexit
+import argparse
 from subprocess import Popen, PIPE, STDOUT
 
 import pyperclip
@@ -64,9 +65,30 @@ def upload_screenshot(image_host, image_path):
         return None
 
 
-# the default image_host="" should be "U", not "I"
-def take_screenshot(event=None, root=None,
-                    image_host="I", clipboard=True, output=True):
+def take_screenshot(clipboard=True, output=True,
+                    image_host="i", type="r"):
+    """
+    Initializes the process of capturing an area of the screen and saving
+    the region to an image file with extension .png.
+
+    Args:
+        clipboard: flag which determines if url from callback will be copied
+                   to system clipboard
+        output: flag which determines if log output from tool will be
+                displayed in the terminal window
+        image_host: determines image host that screenshot will be uploaded to
+            expects:
+                1) "i" or "imgur" for imgur.com
+                2) "s" or "slimg" for sli.mg
+                3) "u" or "uploads" for uploads.im
+        type: determines type of screenshot to be taken
+            expects:
+                1) "r" or "region" for region-select type capture
+                2) "f" or "full" for all-monitors type capture
+                3) "w" or "window" for window-select type capture
+    Returns:
+        boolean, if screenshot process was successful
+    """
     verify_configuration()
 
     screenshot_tool = find_screenshot_tool()
@@ -90,13 +112,9 @@ def take_screenshot(event=None, root=None,
             if output is True:
                 print("\nIt has also been copied to your system clipboard.")
     else:
-        print("entered")
         upload_success = False
         if output is True:
             print(error_msg)
-
-    #while True:
-    #    pass
 
     return upload_success
 
