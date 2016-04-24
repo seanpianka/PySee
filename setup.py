@@ -6,14 +6,14 @@ here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the relevant file
 setup(
-    name='pysee',
+    name='PySee',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # http://packaging.python.org/en/latest/tutorial.html#version
     version='2.1',
 
-    description='Lightweight Python screenshot tool for Linux and Mac OSX',
+    description='Lightweight Python screenshot tool for Linux and Mac OS X',
     long_description='',
 
     # The project's main homepage.

@@ -29,6 +29,21 @@ error_msg = "There was an error when attempting to save " + \
             "or upload the screenshot. Please try again."
 
 
+def process_options(parser=None):
+    if not parser:
+        parser = argparse.ArgumentParser()
+    parser.add_argument("-m", '--mode', help='', required=False,
+                        action="store", dest="selected_mode")
+    #parser.add_argument("-f", '--full', help='', required=False)
+    #parser.add_argument("-r", '--region', help='', required=False)
+    #parser.add_argument("-w", '--window', help='', required=False)
+    parser.add_argument("-o", '--no-output', help='', required=False)
+    parser.add_argument("-u", '--no-upload', help='', required=False)
+
+    args = parser.parse_args()
+
+
+
 def capture_screenshot(tool, image_path, mode):
     time_format = r'%Y-%m-%d-%H-%M-%S'
 
