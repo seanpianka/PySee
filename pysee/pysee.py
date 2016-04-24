@@ -32,15 +32,19 @@ error_msg = "There was an error when attempting to save " + \
 def process_options(parser=None):
     if not parser:
         parser = argparse.ArgumentParser()
-    parser.add_argument("-m", '--mode', help='', required=False,
-                        action="store", dest="selected_mode")
-    #parser.add_argument("-f", '--full', help='', required=False)
-    #parser.add_argument("-r", '--region', help='', required=False)
-    #parser.add_argument("-w", '--window', help='', required=False)
-    parser.add_argument("-o", '--no-output', help='', required=False)
-    parser.add_argument("-u", '--no-upload', help='', required=False)
+    parser.add_argument('--full', "-f", help='', required=False,
+                        action="store_true")
+    parser.add_argument('--region', "-r", help='', required=False,
+                        action="store_true")
+    parser.add_argument('--window', "-w", help='', required=False,
+                        action="store_true")
+    parser.add_argument('--no-output', "-o", help='', required=False,
+                        action="store_true")
+    parser.add_argument('--no-upload', "-u", help='', required=False,
+                        action="store_true")
 
     args = parser.parse_args()
+    return args
 
 
 
