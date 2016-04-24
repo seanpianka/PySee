@@ -10,7 +10,6 @@ Imgur uploading and system clipboard copying.
 :copyright: Copyright 2016 Sean Pianka
 :license: None
 """
-
 import os
 import errno
 import sys
@@ -30,11 +29,19 @@ error_msg = "There was an error when attempting to save " + \
             "or upload the screenshot. Please try again."
 
 
-def capture_screenshot(tool, image_path):
+def capture_screenshot(tool, image_path, mode):
     time_format = r'%Y-%m-%d-%H-%M-%S'
 
-    command = tool.command + ' ' + tool.area + ' ' + tool.filename + ' '
-    command += p['imgdir'] + '{}.png 2>/dev/null'
+    # Creating the command for which to run based on mode and located tool
+    command = tool.command + ' '
+    if mode is "r" or mode is "region":
+        command += tool.area
+    elif mode is "f" or mode is "full":
+        command += tool.full
+    elif mode is "w" or mode is "window":
+        command =+ tool.window
+    command += ' ' + tool.filename + ' ' + p['imgdir'] + '{}.png 2>/dev/null'
+
     cmd = Popen([command.format(dt.now().strftime(time_format))],
                 shell=True,
                 stdout=PIPE, stdin=PIPE, stderr=PIPE)
@@ -57,7 +64,7 @@ def upload_screenshot(image_host, image_path):
             response = uploads_im.upload_picture(image_path)
             image_url = response['img_url']
         elif image_host is None or image_host is 0:
-            image_url = 0
+            image_url = None
 
         return image_url
     except (KeyboardInterrupt, SystemExit):
@@ -66,7 +73,7 @@ def upload_screenshot(image_host, image_path):
 
 
 def take_screenshot(clipboard=True, output=True,
-                    image_host="i", type="r"):
+                    image_host="i", mode="r"):
     """
     Initializes the process of capturing an area of the screen and saving
     the region to an image file with extension .png.
@@ -81,7 +88,7 @@ def take_screenshot(clipboard=True, output=True,
                 1) "i" or "imgur" for imgur.com
                 2) "s" or "slimg" for sli.mg
                 3) "u" or "uploads" for uploads.im
-        type: determines type of screenshot to be taken
+        mode: determines type of screenshot to be taken
             expects:
                 1) "r" or "region" for region-select type capture
                 2) "f" or "full" for all-monitors type capture
@@ -97,26 +104,26 @@ def take_screenshot(clipboard=True, output=True,
     image_url = upload_screenshot(image_host, image_path)
 
     if image_url is not None and image_url is not "":
-        if image_url is 0:
+        if image_url is None:
             if output is True:
-                print("Successful screenshot!" + \
+                print("Successful screenshot!" +
                       "{} was saved locally.".format(image_path['path']))
             image_url = image_path['path']
         else:
             if output is True:
                 print("Successful upload of {}.png!".format(image_path['name']),
                       "\nYou can find it here: {}".format(image_url))
-            upload_success = True
+            upload_status = True
         if clipboard is True:
             pyperclip.copy(image_url)
             if output is True:
                 print("\nIt has also been copied to your system clipboard.")
     else:
-        upload_success = False
+        upload_status = False
         if output is True:
             print(error_msg)
 
-    return upload_success
+    return upload_status
 
 
 if __name__ == "__main__":
