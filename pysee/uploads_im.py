@@ -22,4 +22,4 @@ def upload_picture(image_path):
     if response.json()['status_code'] is 200:
         return response.json()['data']
     else:
-        return None
+
