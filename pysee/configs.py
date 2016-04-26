@@ -10,7 +10,6 @@ are located within the user's home directory.
 :copyright: Copyright 2016 Sean Pianka
 :license: None
 """
-
 import os
 import sys
 
@@ -18,52 +17,63 @@ import pyperclip
 
 from helpers import init_config
 
-config_file = 'config.ini'
+# Known hosts lists, used when checking for arguments
+supported_hosts = ['imgur', 'uploads']
+supported_modes = ['region', 'window', 'full']
+
+# Base location and name of config dir and .conf file
+config_file_name = 'config.conf'
 paths = {}
-base_config_file_test = """[Imgur_API]
+paths['config_dir_path'] = os.path.expanduser('~/.config/pysee/')
+paths['config_file_name'] = config_file_name
+base_config_file_contents = """[Imgur_API]
 client_id=YOUR_ID_HERE
 client_secret=YOUR_SECRET_HERE
 refresh_token=
 
 [path]
-config_path=~/.pysee/
+config_dir_path=~/.config/pysee/
 base_img_path=~/Pictures/"""
 
+class ScreenshotRuntimeError(Exception):
+    def __init__(self, error_message, status_code=None):
+        super(ScreenshotRuntimeError, self).__init__(message)
+        self.errors = errors
 
 def verify_configuration():
-    paths['configdir'] = os.path.expanduser('~/.pysee/')
+    conf_dir_path = paths['config_dir_path']
+    conf_file = paths['config_file_name']
 
-    if os.path.exists(paths['configdir']) is False:
+    if os.path.exists(conf_dir_path) is False:
         try:
             print("Creating configuration folder...")
-            os.makedirs(paths['configdir'])
+            os.makedirs(conf_dir_path)
         except OSError as e:
-            if e.errno != errno.EEXIST or not os.path.isdir(paths['configdir']):
+            if e.errno != errno.EEXIST or not os.path.isdir():
                 raise
                 exit()
-    if os.path.exists(paths['configdir'] + config_file) is False:
+    if os.path.exists(conf_dir_path + conf_file) is False:
         try:
             print("Creating configuration file...")
-            with open(paths['configdir'] + config_file, "w") as f:
-                f.write(base_config_file_test)
+            with open(conf_dir_path + conf_file, "w") as f:
+                f.write(base_config_file_contents)
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
                 exit()
 
-    config_ini = init_config(paths['configdir'] + config_file)
-    paths['imgdir'] = os.path.expanduser(config_ini.get('path', 'base_img_path'))
+    config_parser = init_config(conf_dir_path + conf_file)
+    paths['imgdir'] = os.path.expanduser(config_parser.get('path', 'base_img_path'))
 
     try:
         pyperclip.copy('0')
+        return True
     except pyperclip.exceptions.PyperclipException:
         print("ERROR: Unable to locate copy/paste mechanism for your system.\n" +
-              "Considering perform one of the following commands:\n" +
-              "\t'sudo apt-get install xsel'\n" +
-              "\t'sudo apt-get install xclip'\n")
-        sys.exit(3)
-
-    return None
+              "Considering installing one of the following packages:\n" +
+              "\t'xsel'\n" +
+              "\t'xclip'\n")
+        return False
 
 
 if __name__ == "__main__":
