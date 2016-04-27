@@ -21,5 +21,4 @@ def upload_picture(image_path):
         response = requests.post(UPLOADS_API_URL, files={'upload':img})
     if response.json()['status_code'] is 200:
         return response.json()['data']
-    else:
 

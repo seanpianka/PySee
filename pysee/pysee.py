@@ -1,4 +1,3 @@
-#!/usr/bin/python
 """
 PySee
 ~~~~~
@@ -85,13 +84,13 @@ def upload_screenshot(image_host, image_path):
             response = imgur.upload_picture(image_path)
             if isinstance(response, int) is False:
                 return response['link']
-            else
+            else:
                 return response
         elif image_host is "uploads" or image_host is "u":
             response = uploads_im.upload_picture(image_path)
             if isinstance(response, int) is False:
                 return response['img_url']
-            else
+            else:
                 return response
         else:
             return 7
@@ -129,7 +128,14 @@ def take_screenshot(no_clipboard=False, no_output=False, no_upload=False,
     # Creates configuration files if not found
     verify_configuration()
     # Determines the system's installed screenshot tool
-    screenshot_tool = find_screenshot_tool()
+    try:
+        screenshot_tool = find_screenshot_tool()
+        if screenshot_tool is None:
+            raise
+    except:
+        print("Error: no screenshot tool found.")
+        sys.exit()
+
 
     # Creation and saving of screenshot + image path to file
     image_path = {}
