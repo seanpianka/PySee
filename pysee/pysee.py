@@ -26,30 +26,6 @@ from configs import (paths as p, verify_configuration,
 from helpers import find_screenshot_tool
 
 
-def process_arguments(parser=None):
-    if not parser:
-        parser = argparse.ArgumentParser()
-    parser.add_argument('--full', "-f", help='', required=False,
-                        action="store_true")
-    parser.add_argument('--region', "-r", help='', required=False,
-                        action="store_true")
-    parser.add_argument('--imgur', help='', required=False,
-                        action="store_true")
-    parser.add_argument('--uploads', help='', required=False,
-                        action="store_true")
-    parser.add_argument('--window', "-w", help='', required=False,
-                        action="store_true")
-    parser.add_argument('--no-output', "-o", help='', required=False,
-                        action="store_true")
-    parser.add_argument('--no-upload', "-u", help='', required=False,
-                        action="store_true")
-    parser.add_argument('--no-clipboard', "-c", help='', required=False,
-                        action="store_true")
-
-    args = parser.parse_args()
-    return [args, parser]
-
-
 def capture_screenshot(tool, image_path, mode):
     time_format = r'%Y-%m-%d-%H-%M-%S'
 
@@ -60,7 +36,7 @@ def capture_screenshot(tool, image_path, mode):
     elif mode is "f" or mode is "full":
         command += tool.full
     elif mode is "w" or mode is "window":
-        command =+ tool.window
+        command += tool.window
     command += ' ' + tool.filename + ' ' + p['imgdir'] + '{}.png 2>/dev/null'
 
     try:
@@ -108,7 +84,7 @@ def take_screenshot(no_clipboard=False, no_output=False, no_upload=False,
     Args:
         ~ no_upload: flag which determines if the screenshot should only be
             saved locally or uploaded to image host
-        ~ no_clipboard: flag which determines if url from callback will be copied
+        ~ no_clipboard: flag which determines if image URL will be copied
             to system clipboard
         ~ no_output: flag which determines if log output from tool will be
             displayed in the terminal window
@@ -146,20 +122,22 @@ def take_screenshot(no_clipboard=False, no_output=False, no_upload=False,
         # response will either be an int (error code) or str (image url)
         response = upload_screenshot(image_host, image_path)
         # if image_url isn't None and isn't an error code
-        if None != response and isinstance(response, str):
+        if response is not None and isinstance(response, str):
             if no_output is False:
-                print("Successful upload of {}.png!".format(image_path['name']),
+                print("Successful upload of {}.png".format(image_path['name']),
                       "\nYou can find it here: {}".format(response))
         elif isinstance(response, int):
             if no_output is False:
-                print("Error {}: There was an issue uploading your file to the" +
-                      "selected image host.").format(int(response))
+                print("Error {}: There was an issue uploading your file to \
+                       the selected image host.").format(int(response))
                 sys.exit(response)
+
     elif no_upload is True:
         response = image_path['path']
         if no_output is False:
             print("Successful screenshot!" +
                   "{} was saved locally.".format(response))
+
     if no_clipboard is False:
         # Will copy either system path text or url from response to clipboard
         pyperclip.copy(response)
@@ -167,15 +145,48 @@ def take_screenshot(no_clipboard=False, no_output=False, no_upload=False,
             print("\nIt has also been copied to your system clipboard.")
 
 
+def process_arguments(supported_modes, supported_hosts, parser=None):
+    if not parser:
+        parser = argparse.ArgumentParser()
+
+    for mode in supported_modes:
+        parser.add_argument(
+            '--{}'.format(mode),
+            '-{}'.format(mode[:1].lower()),
+            help='Use the {} mode of an available screenshot \
+                  tool to capture an area of the screen.'.format(mode),
+            action="store_true")
+
+    for host in supported_hosts:
+        parser.add_argument(
+            '--{}'.format(host),
+            '-{}'.format(host[:1].lower()),
+            help='Upload screenshot to {}'.format(host),
+            action="store_true")
+
+    parser.add_argument('--no-output', "-2",
+                        help='Surpress output from the scripts',
+                        action="store_true")
+    parser.add_argument('--no-upload', "-1",
+                        help='Do not upload to an image host \
+                              (does not conflict with image host flags)',
+                        action="store_true")
+    parser.add_argument('--no-clipboard', "-3",
+                        help='Prevents copying of returned \
+                              image URL to the system clipboard',
+                        action="store_true")
+
+    return [parser.parse_args(), parser]
+
+
 if __name__ == "__main__":
-    args, parser = process_arguments()
+    args, parser = process_arguments(supported_hosts, supported_modes)
     no_clipboard = args.no_clipboard
     no_output = args.no_output
     no_upload = args.no_upload
     if not (args.region or args.window or args.full):
         parser.error('No screenshot mode specified,' \
                      ' add --region, --full, or --window')
-        sys.exit(-3)
     else:
         for _mode in supported_modes:
             if getattr(args, _mode) is True:

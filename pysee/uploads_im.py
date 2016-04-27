@@ -9,7 +9,6 @@ for uploading to Uploads.im.
 :copyright: Copyright 2016 Sean Pianka
 :license: None
 """
-
 import requests
 import json
 

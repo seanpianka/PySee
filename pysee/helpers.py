@@ -9,7 +9,6 @@ used in this project.
 :author: Sean Pianka <me@seanpianka.com>
 :license: None
 """
-
 import os
 import sys
 from collections import namedtuple, OrderedDict
