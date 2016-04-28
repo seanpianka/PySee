@@ -12,12 +12,19 @@ for uploading to Uploads.im.
 import requests
 import json
 
+from error import pysee_errors as pye
+
 UPLOADS_API_URL = "http://uploads.im/api"
 
 
 def upload_picture(image_path):
     with open(image_path['path'], 'rb') as img:
-        response = requests.post(UPLOADS_API_URL, files={'upload':img})
-    if response.json()['status_code'] is 200:
-        return response.json()['data']
+        try:
+            response = requests.post(UPLOADS_API_URL, files={'upload':img})
+        except Exception as e:
+            raise pye['5']
 
+    if response.json()['status_code']:
+        return response.json()['data']
+    else:
+        raise pye['5']

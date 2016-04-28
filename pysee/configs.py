@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 """
 configs
 ~~~~~~~
@@ -16,6 +15,7 @@ import sys
 import pyperclip
 
 from helpers import init_config
+from error import pysee_errors as pye
 
 # Known hosts lists, used when checking for arguments
 supported_hosts = ['imgur', 'uploads']
@@ -35,10 +35,6 @@ refresh_token=
 config_dir_path=~/.config/pysee/
 base_img_path=~/Pictures/"""
 
-class ScreenshotRuntimeError(Exception):
-    def __init__(self, error_message, status_code=None):
-        super(ScreenshotRuntimeError, self).__init__(message)
-        self.errors = errors
 
 def verify_configuration():
     conf_dir_path = paths['config_dir_path']
@@ -50,8 +46,7 @@ def verify_configuration():
             os.makedirs(conf_dir_path)
         except OSError as e:
             if e.errno != errno.EEXIST or not os.path.isdir():
-                raise
-                exit()
+                raise pye['7']
     if os.path.exists(conf_dir_path + conf_file) is False:
         try:
             print("Creating configuration file...")
@@ -59,21 +54,15 @@ def verify_configuration():
                 f.write(base_config_file_contents)
         except OSError as e:
             if e.errno != errno.EEXIST:
-                raise
-                exit()
+                raise pye['7']
 
     config_parser = init_config(conf_dir_path + conf_file)
     paths['imgdir'] = os.path.expanduser(config_parser.get('path', 'base_img_path'))
 
     try:
         pyperclip.copy('0')
-        return True
     except pyperclip.exceptions.PyperclipException:
-        print("ERROR: Unable to locate copy/paste mechanism for your system.\n" +
-              "Considering installing one of the following packages:\n" +
-              "\t'xsel'\n" +
-              "\t'xclip'\n")
-        return False
+        raise pye['6']
 
 
 if __name__ == "__main__":
