@@ -12,67 +12,17 @@ Imgur uploading and system clipboard copying.
 import os
 import errno
 import sys
-import atexit
-import argparse
 from subprocess import Popen, PIPE, STDOUT
+from datetime import datetime as dt
 
 import pyperclip
 import imgur
-from datetime import datetime as dt
 
 import uploads_im
+from error import pysee_errors as pye
 from configs import (paths as p, verify_configuration,
                      supported_hosts, supported_modes)
-from helpers import find_screenshot_tool
-
-
-def capture_screenshot(tool, image_path, mode):
-    time_format = r'%Y-%m-%d-%H-%M-%S'
-
-    # Creating the command for which to run based on mode and located tool
-    command = tool.command + ' '
-    if mode is "r" or mode is "region":
-        command += tool.area
-    elif mode is "f" or mode is "full":
-        command += tool.full
-    elif mode is "w" or mode is "window":
-        command += tool.window
-    command += ' ' + tool.filename + ' ' + p['imgdir'] + '{}.png 2>/dev/null'
-
-    try:
-        cmd = Popen([command.format(dt.now().strftime(time_format))],
-                    shell=True,
-                    stdout=PIPE, stdin=PIPE, stderr=PIPE)
-        img_path = p['imgdir'] + dt.now().strftime(time_format) + '.png'
-        cmd.communicate()
-
-        img_name = img_path.replace(p['imgdir'], '')[:-4]
-        image_path['path'] = img_path  # absolute path of screenshot
-        image_path['name'] = img_name  # filename of screenshot
-        return None
-    except:
-        return (2, "Failed to process or execute screenshot command")
-
-
-def upload_screenshot(image_host, image_path):
-    try:
-        if image_host is "imgur" or image_host is "i":
-            response = imgur.upload_picture(image_path)
-            if isinstance(response, int) is False:
-                return response['link']
-            else:
-                return response
-        elif image_host is "uploads" or image_host is "u":
-            response = uploads_im.upload_picture(image_path)
-            if isinstance(response, int) is False:
-                return response['img_url']
-            else:
-                return response
-        else:
-            return 7
-    except (KeyboardInterrupt, SystemExit):
-        print("Interrupt detected, aborting.\n")
-        sys.exit(1)
+from helpers import find_screenshot_tool, process_arguments
 
 
 def take_screenshot(no_clipboard=False, no_output=False, no_upload=False,
@@ -102,81 +52,94 @@ def take_screenshot(no_clipboard=False, no_output=False, no_upload=False,
         boolean, if screenshot process was successful
     """
     # Creates configuration files if not found
-    verify_configuration()
+    try:
+        verify_configuration()
+    except (pye['6'], pye['7']) as e:
+        print(e)
+        return False
+
     # Determines the system's installed screenshot tool
     try:
         screenshot_tool = find_screenshot_tool()
         if screenshot_tool is None:
-            raise
-    except:
-        print("Error: no screenshot tool found.")
-        sys.exit()
-
+            raise pye['1']
+    except pye['1'] as e:
+        print(e)
+        return False
 
     # Creation and saving of screenshot + image path to file
-    image_path = {}
-    capture_screenshot(screenshot_tool, image_path, mode)
+    try:
+        image_path = {}
+        capture_screenshot(screenshot_tool, image_path, mode)
+    except pye['3'] as e:
+        print(e)
+        return False
 
     # if the screenshot should be uploaded
     if no_upload is False:
-        # response will either be an int (error code) or str (image url)
-        response = upload_screenshot(image_host, image_path)
-        # if image_url isn't None and isn't an error code
-        if response is not None and isinstance(response, str):
+        try:
+            response = upload_screenshot(image_host, image_path)
+        except (pye['2'], pye['4'], pye['5']) as e:
+            print(e)
+            return False
+        if response is not None:
             if no_output is False:
                 print("Successful upload of {}.png".format(image_path['name']),
                       "\nYou can find it here: {}".format(response))
-        elif isinstance(response, int):
-            if no_output is False:
-                print("Error {}: There was an issue uploading your file to \
-                       the selected image host.").format(int(response))
-                sys.exit(response)
 
     elif no_upload is True:
-        response = image_path['path']
+        response = image_path['path'] # absolute path to image
         if no_output is False:
-            print("Successful screenshot!" +
-                  "{} was saved locally.".format(response))
+            print("Successful screenshot! \
+                   {} was saved locally.".format(response))
 
     if no_clipboard is False:
-        # Will copy either system path text or url from response to clipboard
         pyperclip.copy(response)
         if no_output is False:
             print("\nIt has also been copied to your system clipboard.")
 
+    return True
 
-def process_arguments(supported_modes, supported_hosts, parser=None):
-    if not parser:
-        parser = argparse.ArgumentParser()
 
-    for mode in supported_modes:
-        parser.add_argument(
-            '--{}'.format(mode),
-            '-{}'.format(mode[:1].lower()),
-            help='Use the {} mode of an available screenshot \
-                  tool to capture an area of the screen.'.format(mode),
-            action="store_true")
+def capture_screenshot(tool, image_path, mode):
+    time_format = r'%Y-%m-%d-%H-%M-%S'
 
-    for host in supported_hosts:
-        parser.add_argument(
-            '--{}'.format(host),
-            '-{}'.format(host[:1].lower()),
-            help='Upload screenshot to {}'.format(host),
-            action="store_true")
+    # Creating the command for which to run based on mode and located tool
+    command = tool.command + ' '
+    if mode is "r" or mode is "region":
+        command += tool.area
+    elif mode is "f" or mode is "full":
+        command += tool.full
+    elif mode is "w" or mode is "window":
+        command += tool.window
+    command += ' ' + tool.filename + ' ' + p['imgdir'] + '{}.png 2>/dev/null'
 
-    parser.add_argument('--no-output', "-2",
-                        help='Surpress output from the scripts',
-                        action="store_true")
-    parser.add_argument('--no-upload', "-1",
-                        help='Do not upload to an image host \
-                              (does not conflict with image host flags)',
-                        action="store_true")
-    parser.add_argument('--no-clipboard', "-3",
-                        help='Prevents copying of returned \
-                              image URL to the system clipboard',
-                        action="store_true")
+    try:
+        cmd = Popen([command.format(dt.now().strftime(time_format))],
+                    shell=True,
+                    stdout=PIPE, stdin=PIPE, stderr=PIPE)
+        img_path = p['imgdir'] + dt.now().strftime(time_format) + '.png'
+        cmd.communicate()
+        img_name = img_path.replace(p['imgdir'], '')[:-4]
+        image_path['path'] = img_path  # absolute path of screenshot
+        image_path['name'] = img_name  # filename of screenshot
+    except:
+        raise pye['3']
 
-    return [parser.parse_args(), parser]
+
+def upload_screenshot(image_host, image_path):
+    try:
+        if image_host is "imgur":
+            response = imgur.upload_picture(image_path)
+            return response['link']
+        elif image_host is "uploads":
+            response = uploads_im.upload_picture(image_path)
+            return response['img_url']
+
+    except (KeyboardInterrupt, SystemExit):
+        raise pye['8']
+    except (pye['5'], pye['2'], pye['4']) as e:
+        raise e
 
 
 if __name__ == "__main__":

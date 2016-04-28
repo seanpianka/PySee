@@ -22,6 +22,7 @@ from datetime import datetime
 
 from helpers import init_config
 from configs import paths as p
+from error import pysee_errors as pye
 
 
 def authenticate_client():
@@ -37,27 +38,24 @@ def authenticate_client():
 
 def upload_picture(image_path):
     client = authenticate_client()
-
-    upload_json = {
+    print('Uploading screenshot...')
+    upload = {
         'album': None,
         'name': image_path['name'],
         'title': None,
         'description': 'Screenshot taken via PySee'
     }
 
-    print('Uploading screenshot...')
     try:
         return client.upload_from_path(image_path['path'],
-                                       config=upload_json,
+                                       config=upload,
                                        anon=True)
+
     except FileNotFoundError as e:
-        print("There was an issue locating the image file to be uploaded.\n"
-              "Error: ", e, "\n")
-        return -1
+        raise pye['4']
+
     except ImgurClientError as e:
         print("There was an error validating your API keys for imgur.com.\n" +
               "Go to https://api.imgur.com/oauth2/addclient to receive your" +
-              " own API keys.\n"
-              "Error " + str(e.status_code) + ": " + str(e.error_message))
-        return -2
-
+              " own API keys.\n")
+        raise pye['2']
