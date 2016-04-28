@@ -7,7 +7,6 @@ class PySeeError(Exception):
         if self.status_code:
             return "PyseeError: [Errno %s] %s" % (self.status_code,
                                                   self.error_message)
-        else:
             return self.error_message
 
 pysee_errors = {

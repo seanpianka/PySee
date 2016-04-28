@@ -22,8 +22,8 @@ supported_hosts = ['imgur', 'uploads']
 supported_modes = ['region', 'window', 'full']
 
 # Base location and name of config dir and .conf file
-config_file_name = 'config.conf'
 paths = {}
+config_file_name = 'config.conf'
 paths['config_dir_path'] = os.path.expanduser('~/.config/pysee/')
 paths['config_file_name'] = config_file_name
 base_config_file_contents = """[Imgur_API]
@@ -47,6 +47,7 @@ def verify_configuration():
         except OSError as e:
             if e.errno != errno.EEXIST or not os.path.isdir():
                 raise pye['7']
+
     if os.path.exists(conf_dir_path + conf_file) is False:
         try:
             print("Creating configuration file...")
