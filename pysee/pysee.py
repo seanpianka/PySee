@@ -75,6 +75,7 @@ def take_screenshot(no_clipboard=False, no_output=False, no_upload=False,
         print(e)
         return False
 
+    print(type(pye['2']))
     # if the screenshot should be uploaded
     if no_upload is False:
         try:
