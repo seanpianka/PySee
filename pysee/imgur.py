@@ -37,25 +37,24 @@ def authenticate_client():
 
 
 def upload_picture(image_path):
-    client = authenticate_client()
-    print('Uploading screenshot...')
-    upload = {
-        'album': None,
-        'name': image_path['name'],
-        'title': None,
-        'description': 'Screenshot taken via PySee'
-    }
-
     try:
+        client = authenticate_client()
+        print('Uploading screenshot...')
+        upload = {
+            'album': None,
+            'name': image_path['name'],
+            'title': None,
+            'description': 'Screenshot taken via PySee'
+        }
         return client.upload_from_path(image_path['path'],
                                        config=upload,
                                        anon=True)
-
+    except (KeyboardInterrupt, SystemExit) as e:
+        raise pye['8']
     except FileNotFoundError as e:
         raise pye['4']
-
     except ImgurClientError as e:
         print("There was an error validating your API keys for imgur.com.\n" +
               "Go to https://api.imgur.com/oauth2/addclient to receive your" +
               " own API keys.\n")
-        raise pye['2']
+        raise pye['9']
