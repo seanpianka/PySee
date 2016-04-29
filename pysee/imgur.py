@@ -49,6 +49,7 @@ def upload_picture(image_path):
         return client.upload_from_path(image_path['path'],
                                        config=upload,
                                        anon=True)
+
     except (KeyboardInterrupt, SystemExit) as e:
         raise pye['8']
     except FileNotFoundError as e:

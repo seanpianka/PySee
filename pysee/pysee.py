@@ -26,7 +26,7 @@ from helpers import find_screenshot_tool, process_arguments
 
 
 def take_screenshot(no_clipboard=False, no_output=False, no_upload=False,
-                    image_host="i", mode="r"):
+                    image_host="i", mode="r", timed=False):
     """
     Initializes the process of capturing an area of the screen and saving
     the region to an image file with extension .png.
@@ -154,7 +154,7 @@ if __name__ == "__main__":
     if not (args.imgur or args.uploads):
         parser.error('No image host specified,' \
                      ' add --imgur or --uploads')
-        sys.exit(-4)
+        sys.exit()
     else:
         for _image_host in supported_hosts:
             if getattr(args, _image_host):

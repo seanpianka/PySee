@@ -41,33 +41,52 @@ def is_tool(name):
 
 def find_screenshot_tool():
     tools = OrderedDict()
-    tools['gnome-screenshot'] = create_tool(name='gnome-screenshot',
-                                            command='gnome-screenshot -p',
-                                            area='-a',
-                                            window='-w',
-                                            full='',
-                                            filename='-f')
-    tools['screencapture'] = create_tool(name='screencapture',
-                                         command='screencapture -Cx',
-                                         area='-s',
-                                         window='-w',
-                                         full='',
-                                         filename='')
-    tools['shutter'] = create_tool(name='shutter',
-                                   command='shutter',
-                                   area='-s',
-                                   window='-w',
-                                   full='-f',
-                                   filename='-o')
+    tools['gnome-screenshot'] = create_tool(
+            name='gnome-screenshot',
+            command='gnome-screenshot -p',
+            area='-a',
+            window='-w',
+            full='',
+            filename='-f')
+    tools['screencapture'] = create_tool(
+            name='screencapture',
+            command='screencapture -Cx',
+            area='-s',
+            window='-w',
+            full='',
+            filename='')
+    tools['shutter'] = create_tool(
+            name='shutter',
+            command='shutter',
+            area='-s',
+            window='-w',
+            full='-f',
+            filename='-o')
+    tools['xfce4-screenshooter'] = create_tool(
+            name='xfce4-screenshooter',
+            command='xfce4-screenshooter',
+            area='-r',
+            window='-w',
+            full='-f',
+            filename='-s')
+    tools['scrot'] = create_tool(
+            name='scrot',
+            command='scrot',
+            area='-r',
+            window='-w',
+            full='-f',
+            filename='-s')
+
     for tool in tools:
         if is_tool(tool):
             return tools[tool]
 
 
-def process_arguments(supported_modes, supported_hosts, parser=None):
+def process_arguments(supported_hosts, supported_modes, parser=None):
     if not parser:
         parser = argparse.ArgumentParser()
 
+    # generate arguments of modes based on supported screenshot modes
     for mode in supported_modes:
         parser.add_argument(
             '--{}'.format(mode),
@@ -75,26 +94,34 @@ def process_arguments(supported_modes, supported_hosts, parser=None):
             help='Use the {} mode of an available screenshot \
                   tool to capture an area of the screen.'.format(mode),
             action="store_true")
-
+    # generate arguments of hosts based on supported image host
     for host in supported_hosts:
+        # ensuring image host flags will not conflict with mode flags
+        short_flag = '-{}'.format(host[:1].lower()) \
+                     if '-{}'.format(host[:1].lower()) not in ['w','r','f'] \
+                     else '-{}'.format(host[:2].lower())
         parser.add_argument(
             '--{}'.format(host),
-            '-{}'.format(host[:1].lower()),
+            short_flag,
             help='Upload screenshot to {}'.format(host),
             action="store_true")
 
-    parser.add_argument('--no-output', "-2",
-                        help='Surpress output from the scripts',
-                        action="store_true")
     parser.add_argument('--no-upload', "-1",
                         help='Do not upload to an image host \
                               (does not conflict with image host flags)',
+                        action="store_true")
+    parser.add_argument('--no-output', "-2",
+                        help='Surpress output from the scripts',
                         action="store_true")
     parser.add_argument('--no-clipboard', "-3",
                         help='Prevents copying of returned \
                               image URL to the system clipboard',
                         action="store_true")
-
+    parser.add_argument('--timed', "-4",
+                        help='Allows screenshots to occur automatically \
+                              at a set time interval on a specific screen \
+                              region',
+                        action="store_true")
     return [parser.parse_args(), parser]
 
 
