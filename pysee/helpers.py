@@ -17,6 +17,8 @@ from distutils.spawn import find_executable
 
 from error import pysee_errors as pye
 
+Tool = namedtuple('Tool', 'name command area window full filename')
+
 
 def edit_text(filename):
     if os.getenv('EDITOR') is not None:
@@ -30,7 +32,6 @@ def edit_text(filename):
 
 def create_tool(name, command, area, window, full, filename):
     # Tool used for creating a namedtuple of available tools
-    Tool = namedtuple('Tool', 'name command area window full filename')
     return Tool(name=name, command=command, area=area,
                 window=window, full=full, filename=filename)
 
@@ -142,4 +143,4 @@ def init_config(path):
         return config
     except helpers.ConfigParser.NoSectionError as e:
         print("There was an error reading the .ini file: ", e)
-        sys.exit(4)
+        sys.exit()
