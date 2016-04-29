@@ -19,7 +19,7 @@ import pyperclip
 import imgur
 
 import uploads_im
-from error import pysee_errors as pye
+from error import PySeeError, pysee_errors as pye
 from configs import (paths as p, verify_configuration,
                      supported_hosts, supported_modes)
 from helpers import find_screenshot_tool, process_arguments
@@ -54,7 +54,7 @@ def take_screenshot(no_clipboard=False, no_output=False, no_upload=False,
     # Creates configuration files if not found
     try:
         verify_configuration()
-    except (pye['6'], pye['7']) as e:
+    except PySeeError as e:
         print(e)
         return False
 
@@ -63,7 +63,7 @@ def take_screenshot(no_clipboard=False, no_output=False, no_upload=False,
         screenshot_tool = find_screenshot_tool()
         if screenshot_tool is None:
             raise pye['1']
-    except pye['1'] as e:
+    except PySeeError as e:
         print(e)
         return False
 
@@ -71,16 +71,15 @@ def take_screenshot(no_clipboard=False, no_output=False, no_upload=False,
     try:
         image_path = {}
         capture_screenshot(screenshot_tool, image_path, mode)
-    except pye['3'] as e:
+    except PySeeError as e:
         print(e)
         return False
 
-    print(type(pye['2']))
     # if the screenshot should be uploaded
     if no_upload is False:
         try:
             response = upload_screenshot(image_host, image_path)
-        except (pye['2'], pye['4'], pye['5']) as e:
+        except PySeeError as e:
             print(e)
             return False
         if response is not None:
@@ -136,11 +135,8 @@ def upload_screenshot(image_host, image_path):
         elif image_host is "uploads":
             response = uploads_im.upload_picture(image_path)
             return response['img_url']
-
-    except (KeyboardInterrupt, SystemExit):
-        raise pye['8']
-    except (pye['5'], pye['2'], pye['4']) as e:
-        raise e
+    except PySeeError as e:
+        raise(e)
 
 
 if __name__ == "__main__":

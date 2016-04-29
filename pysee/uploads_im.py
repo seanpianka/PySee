@@ -22,9 +22,9 @@ def upload_picture(image_path):
         try:
             response = requests.post(UPLOADS_API_URL, files={'upload':img})
         except Exception as e:
-            raise pye['5']
+            raise pye['2']
 
     if response.json()['status_code']:
         return response.json()['data']
     else:
-        raise pye['5']
+        raise pye['9']
