@@ -57,10 +57,10 @@ def verify_configuration():
     try:
         pyperclip.copy('')
     except pyperclip.exceptions.PyperclipException:
-        print("ERROR: Unable to locate copy/paste mechanism for your system.\n" +
-              "Considering perform one of the following commands:\n" +
-              "\t'sudo apt-get install xsel'\n" +
-              "\t'sudo apt-get install xclip'\n")
+        print("ERROR: Unable to locate a command-line X clipboard tool.\n" +
+              "Consider installing:\n" +
+              "    1) xclip (recommended)\n" +
+              "    2) xsel\n")
         sys.exit(3)
 
     return None
