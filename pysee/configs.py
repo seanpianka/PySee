@@ -23,7 +23,7 @@ supported_modes = ['region', 'window', 'full']
 
 # Base location and name of config dir and .conf file
 paths = {}
-config_file_name = 'config.conf'
+config_file_name = 'pysee.conf'
 paths['config_dir_path'] = os.path.expanduser('~/.config/pysee/')
 paths['config_file_name'] = config_file_name
 base_config_file_contents = """[Imgur_API]
@@ -63,7 +63,7 @@ def verify_configuration():
     try:
         pyperclip.copy('0')
     except pyperclip.exceptions.PyperclipException:
-        raise pye['6']
+        raise pye['5']
 
 
 if __name__ == "__main__":

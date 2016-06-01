@@ -26,7 +26,7 @@ from helpers import find_screenshot_tool, process_arguments
 
 
 def take_screenshot(no_clipboard=False, no_output=False, no_upload=False,
-                    image_host="i", mode="r", timed=False):
+                    image_host="imgur", mode="r", timed=False):
     """
     Initializes the process of capturing an area of the screen and saving
     the region to an image file with extension .png.
@@ -40,9 +40,9 @@ def take_screenshot(no_clipboard=False, no_output=False, no_upload=False,
             displayed in the terminal window
         ~ image_host: determines image host that screenshot will be uploaded to
             expects:
-                1) "i" or "imgur" for imgur.com
-                2) "s" or "slimg" for sli.mg
-                3) "u" or "uploads" for uploads.im
+                1) "imgur" for imgur.com
+                2) "slimg" for sli.mg
+                3) "uploads" for uploads.im
         ~ mode: determines type of screenshot to be taken
             expects:
                 1) "r" or "region" for region-select type capture
@@ -98,7 +98,7 @@ def take_screenshot(no_clipboard=False, no_output=False, no_upload=False,
         if no_output is False:
             print("\nIt has also been copied to your system clipboard.")
 
-    return True
+    return image_path['path']
 
 
 def capture_screenshot(tool, image_path, mode):
@@ -139,7 +139,7 @@ def upload_screenshot(image_host, image_path):
         raise(e)
 
 
-if __name__ == "__main__":
+def _main():
     args, parser = process_arguments(supported_hosts, supported_modes)
     no_clipboard = args.no_clipboard
     no_output = args.no_output
@@ -165,3 +165,7 @@ if __name__ == "__main__":
                     no_upload=no_upload,
                     image_host=image_host,
                     mode=mode)
+
+
+if __name__ == "__main__":
+    _main()
