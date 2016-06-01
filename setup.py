@@ -48,11 +48,7 @@ setup(
     keywords=['screenshot', 'tool', 'lightweight', 'linux', 'osx', 'mac'],
     install_requires=[
             'imgurpython',
-            'zope.interface',
             'pyperclip',
-            'clipboard',
-            'pytz',
-            'datetime',
             'requests'
     ],
 
