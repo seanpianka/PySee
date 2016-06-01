@@ -25,9 +25,9 @@ def edit_text(filename):
         os.system("$EDITOR " + filename)
     else:
         try:
-            os.system("nano " + filename)
+            os.system("vim " + filename)
         except:
-            os.system("vi " + filename)
+            os.system("nano " + filename)
 
 
 def create_tool(name, command, area, window, full, filename):

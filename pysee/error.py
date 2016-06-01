@@ -1,3 +1,13 @@
+"""
+error
+~~~~~
+
+Allow for custom error messages when handling PySee
+
+:author: Sean Pianka <me@seanpianka.com>
+:copyright: Copyright 2016 Sean Pianka
+:license: None
+"""
 class PySeeError(Exception):
     def __init__(self, error_message, status_code=None):
         self.status_code = status_code
