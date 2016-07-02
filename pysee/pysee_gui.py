@@ -11,7 +11,11 @@ host to upload to.
 :copyright: Copyright 2016 Sean Pianka
 :license: None
 """
+import sys
+import os
+import subprocess
 import tkinter as tk
+import webbrowser
 from tkinter import ttk
 from collections import OrderedDict
 
@@ -20,16 +24,34 @@ from helpers import edit_text
 from configs import paths, config_file_name
 
 
+SOURCE_URL = "https://github.com/seanpianka/pysee"
 LARGE_FONT = ("Helvetica", 12)
 MEDIUM_FONT = ("Helvetica", 10)
 SMALL_FONT = ("Helvetica", 8)
 CONFIG_FILE = paths['config_dir_path'] + config_file_name
 WINDOW_WIDTH = 380
 WINDOW_HEIGHT = 240
+LAST_MODE = ""
+LAST_HOST = ""
+if sys.platform == "win32":
+    source_open = lambda url: os.startfile(url)
+elif sys.platform == "darwin":
+    source_open = lambda url: subprocess.Popen(['open', url])
+else:
+    try:
+        source_open = lambda url: subprocess.Popen(['xdg-open', url])
+    except OSError:
+        source_open = lambda url: "Open a browser on: %s" % url
+
+
+def capture(image_host, mode):
+    take_screenshot(image_host=image_host, mode=mode)
+    LAST_MODE = mode
+    LAST_HOST = image_host
 
 
 def popupmsg(msg):
-    popup = tk.Tk()
+    popup = tk.Toplevel()
     popup.wm_title("!")
     label = ttk.Label(popup, text=msg, font=MEDIUM_FONT)
     label.pack(side="top", fill="x", pady=10)
@@ -55,16 +77,16 @@ class PySeeApp(tk.Tk):
 
         capturemenu = tk.Menu(menubar, tearoff=1)
         capturemenu.add_command(label="Fullscreen",
-            command=lambda: take_screenshot(image_host="imgur", mode="f"))
+            command=lambda: capture("imgur", "f"))
         capturemenu.add_command(label="Region",
-            command=lambda: take_screenshot(image_host="imgur", mode="r"))
+            command=lambda: capture("imgur", "r"))
         capturemenu.add_command(label="Window",
-            command=lambda: take_screenshot(image_host="imgur", mode="w"))
+            command=lambda: capture("imgur", "w"))
         capturemenu.add_command(label="Monitor",
             command=lambda: popupmsg("Not supported yet."))
         capturemenu.add_separator()
         capturemenu.add_command(label="Repeat Capture",
-            command=lambda: popupmsg("Not supported yet."))
+            command=lambda: capture(LAST_HOST, LAST_MODE))
         menubar.add_cascade(label="Capture", menu=capturemenu)
 
         uploadmenu = tk.Menu(menubar, tearoff=1)
@@ -80,7 +102,7 @@ class PySeeApp(tk.Tk):
 
         settingsmenu = tk.Menu(menubar, tearoff=1)
         settingsmenu.add_command(label="Edit Configuration File",
-            command=lambda: popupmsg("Not supported yet."))
+            command=lambda: self.show_frame(SettingsPage))
         settingsmenu.add_separator()
         settingsmenu.add_command(label="Imgur API",
             command=lambda: popupmsg("Not supported yet."))
@@ -90,9 +112,9 @@ class PySeeApp(tk.Tk):
 
         aboutmenu = tk.Menu(menubar, tearoff=1)
         aboutmenu.add_command(label="About",
-            command=lambda: popupmsg("Not supported yet."))
+            command=lambda: self.show_frame(AboutPage))
         aboutmenu.add_command(label="Source Code",
-            command=lambda: popupmsg("Not supported yet."))
+            command=lambda: source_open(SOURCE_URL))
         aboutmenu.add_command(label="Donate",
             command=lambda: popupmsg("Not supported yet."))
         menubar.add_cascade(label="About", menu=aboutmenu)
@@ -142,24 +164,18 @@ class CapturePage(tk.Frame):
         for i in range(2):
             self.columnconfigure(i, weight=1)
 
-        cap_region = ttk.Button(self,
-                                text="Region",
-                                command=lambda: popupmsg("Region"))
-        cap_region.grid(row=0, column=0)
-
-        cap_fullscreen = ttk.Button(self,
-                                    text="Fullscreen",
-                                    command=lambda: popupmsg("Fullscreen"))
-        cap_fullscreen.grid(row=0, column=1)
-
-        cap_monitor = ttk.Button(self,
-                                 text="Monitor",
+        cap_region = ttk.Button(self, text="Region",
+                                command=lambda: capture("imgur", "r"))
+        cap_fullscreen = ttk.Button(self, text="Fullscreen",
+                                    command=lambda: capture("imgur", "f"))
+        cap_monitor = ttk.Button(self, text="Monitor",
                                  command=lambda: popupmsg("Monitor"))
-        cap_monitor.grid(row=1, column=0)
+        cap_window = ttk.Button(self, text="Window",
+                                command=lambda: capture("imgur", "w"))
 
-        cap_window = ttk.Button(self,
-                                text="Window",
-                                command=lambda: popupmsg("Window"))
+        cap_region.grid(row=0, column=0)
+        cap_fullscreen.grid(row=0, column=1)
+        cap_monitor.grid(row=1, column=0)
         cap_window.grid(row=1, column=1)
 
 
@@ -172,25 +188,22 @@ class UploadPage(tk.Frame):
         for i in range(2):
             self.columnconfigure(i, weight=1)
 
-        upload_file = ttk.Button(self,
-                                text="Upload file",
+        upload_file = ttk.Button(self, text="Upload file",
                                 command=lambda: popupmsg("Upload file"))
-        upload_file.grid(row=0, column=0)
-
-        upload_folder = ttk.Button(self,
-                                   text="Upload folder",
+        upload_folder = ttk.Button(self, text="Upload folder",
                                    command=lambda: popupmsg("Upload folder"))
-        upload_folder.grid(row=0, column=1)
-
-        upload_clipboard = ttk.Button(self,
-                                      text="Upload clipboard",
+        upload_clipboard = ttk.Button(self, text="Upload clipboard",
                                       command=lambda: popupmsg("Upload clipboard"))
-        upload_clipboard.grid(row=1, column=0)
-
-        upload_url = ttk.Button(self,
-                                text="Upload url",
+        upload_url = ttk.Button(self, text="Upload url",
                                 command=lambda: popupmsg("Upload url"))
+
+        upload_file.grid(row=0, column=0)
+        upload_folder.grid(row=0, column=1)
+        upload_clipboard.grid(row=1, column=0)
         upload_url.grid(row=1, column=1)
+
+    def upload():
+        pass
 
 
 class SettingsPage(tk.Frame):
@@ -214,8 +227,7 @@ class SettingsPage(tk.Frame):
         settings_entry.grid(padx=3, pady=(3, 0), row=0, column=0)
 
 
-        button = ttk.Button(self,
-                            text="Save Changes",
+        button = ttk.Button(self, text="Save Changes",
                             command=lambda: save_changes())
         button.grid(pady=3, row=1, column=0)
 
