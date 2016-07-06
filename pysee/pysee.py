@@ -84,7 +84,7 @@ def take_screenshot(no_clipboard=False, no_output=False, no_upload=False,
             return False
         if response is not None:
             if no_output is False:
-                print("Successful upload of {}.png".format(image_path['name']),
+                print("Successful upload of {}.png".format(image_path['name']) +
                       "\nYou can find it here: {}".format(response))
 
     elif no_upload is True:
