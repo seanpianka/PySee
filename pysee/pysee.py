@@ -16,9 +16,10 @@ from subprocess import Popen, PIPE, STDOUT
 from datetime import datetime as dt
 
 import pyperclip
-import imgur
 
+import imgur
 import uploads_im
+import slimg
 from error import PySeeError, pysee_errors as pye
 from configs import (paths as p, verify_configuration,
                      supported_hosts, supported_modes)
@@ -26,7 +27,7 @@ from helpers import find_screenshot_tool, process_arguments
 
 
 def take_screenshot(no_clipboard=False, no_output=False, no_upload=False,
-                    image_host="imgur", mode="r", timed=False):
+                    image_host="imgur", mode="r", timed=0):
     """
     Initializes the process of capturing an area of the screen and saving
     the region to an image file with extension .png.
@@ -135,6 +136,9 @@ def upload_screenshot(image_host, image_path):
         elif image_host is "uploads":
             response = uploads_im.upload_picture(image_path)
             return response['img_url']
+        elif image_host is "slimg":
+            response = slimg.upload_picture(image_path)
+            return response['img_url']
     except PySeeError as e:
         raise(e)
 
@@ -151,9 +155,8 @@ def _main():
         for _mode in supported_modes:
             if getattr(args, _mode) is True:
                 mode = _mode
-    if not (args.imgur or args.uploads):
-        parser.error('No image host specified,' \
-                     ' add --imgur or --uploads')
+    if not (args.imgur or args.uploads or args.slimg):
+        parser.error('No image host specified.')
         sys.exit()
     else:
         for _image_host in supported_hosts:

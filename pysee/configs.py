@@ -18,7 +18,7 @@ from helpers import init_config
 from error import pysee_errors as pye
 
 # Known hosts lists, used when checking for arguments
-supported_hosts = ['imgur', 'uploads']
+supported_hosts = ['imgur', 'uploads', 'slimg']
 supported_modes = ['region', 'window', 'full']
 
 # Base location and name of config dir and .conf file
@@ -30,6 +30,10 @@ base_config_file_contents = """[Imgur_API]
 client_id=YOUR_ID_HERE
 client_secret=YOUR_SECRET_HERE
 refresh_token=
+
+[Slimg_API]
+client_id=eIVbKCqD3Omkiv0gADKyj6adX74QYhYc
+client_secret=YOUR_SECRET_HERE
 
 [path]
 config_dir_path=~/.config/pysee/
