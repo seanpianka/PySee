@@ -13,14 +13,16 @@ import requests
 import json
 
 from error import pysee_errors as pye
+from helpers import init_config
+from configs import paths as p
 
-UPLOADS_API_URL = "http://uploads.im/api"
+API_URL = "http://uploads.im/api"
 
 
 def upload_picture(image_path):
     with open(image_path['path'], 'rb') as img:
         try:
-            response = requests.post(UPLOADS_API_URL, files={'upload':img})
+            response = requests.post(API_URL, params={'upload':img})
         except Exception as e:
             raise pye['2']
 

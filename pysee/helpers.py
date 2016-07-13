@@ -73,10 +73,10 @@ def find_screenshot_tool():
     tools['scrot'] = create_tool(
             name='scrot',
             command='scrot',
-            area='-r',
-            window='-w',
-            full='-f',
-            filename='-s')
+            area='-s',
+            window='-s',
+            full='',
+            filename='')
 
     for tool in tools:
         if is_tool(tool):
@@ -142,5 +142,5 @@ def init_config(path):
         config.read(path)
         return config
     except helpers.ConfigParser.NoSectionError as e:
-        print("There was an error reading the .ini file: ", e)
+        print("There was an error reading the settings file: ", e)
         sys.exit()

@@ -33,6 +33,8 @@ WINDOW_WIDTH = 380
 WINDOW_HEIGHT = 240
 LAST_MODE = ""
 LAST_HOST = ""
+
+
 if sys.platform == "win32":
     source_open = lambda url: os.startfile(url)
 elif sys.platform == "darwin":
@@ -134,15 +136,18 @@ class PySeeApp(tk.Tk):
         for r in range(self.MAX_ROW):
             container.rowconfigure(r, weight=1)
 
+        # width=(int(WINDOW_WIDTH * (1/len(self.frames.items())))),
+        # Calculates the percentage of the screen that each button should
+        # occupy. Same value for each button, dependent on number of buttons
         i = 0
         for page, title in self.frames.items():
             container.columnconfigure(i, weight=1)
             ttk.Button(container,
-                      width=(int(WINDOW_WIDTH * (1/len(self.frames.items())))),
-                      command=lambda page=page: self.show_frame(page),
-                      text=title[1]).grid(row=self.MAX_ROW,
-                                          column=i,
-                                          sticky="ew")
+                       width=(int(WINDOW_WIDTH * (1/len(self.frames.items())))),
+                       command=lambda page=page: self.show_frame(page),
+                       text=title[1]).grid(row=self.MAX_ROW,
+                                           column=i,
+                                           sticky="ew")
             i+=1
         self.show_frame(AboutPage)
 
@@ -260,19 +265,3 @@ def _main():
 
 if __name__ == '__main__':
     _main()
-
-
-#label = ttk.Label(self,
-#                 text="Edit your configuration file",
-#                 font=LARGE_FONT)
-
-#label.pack(pady=10, padx=10)
-
-#button1 = ttk.Button(self,
-#                    text = "Back to home",
-#                    command=lambda: controller.show_frame(StartPage))
-#button1.pack(pady=10, padx=10)
-#button2 = ttk.Button(self,
-#                    text = "Edit file",
-#                    command=lambda: edit_text(CONFIG_FILE))
-#button2.pack(pady=10, padx=10)
