@@ -58,7 +58,3 @@ def upload_picture(image_path):
               "Go to https://api.imgur.com/oauth2/addclient to receive your" +
               " own API keys.\n")
         raise pye['9']
-
-
-if __name__ == '__main__':
-    upload_picture('/home/sean/Pictures/amb6HwA.jpg')
