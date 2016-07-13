@@ -27,8 +27,8 @@ config_file_name = 'pysee.conf'
 paths['config_dir_path'] = os.path.expanduser('~/.config/pysee/')
 paths['config_file_name'] = config_file_name
 base_config_file_contents = """[Imgur_API]
-client_id=YOUR_ID_HERE
-client_secret=YOUR_SECRET_HERE
+client_id=65701d960c6ab14
+client_secret=
 refresh_token=
 
 [Slimg_API]
