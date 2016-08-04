@@ -9,17 +9,24 @@ for uploading to Uploads.im.
 :copyright: Copyright 2016 Sean Pianka
 :license: None
 """
-
 import requests
 import json
 
-UPLOADS_API_URL = "http://uploads.im/api"
+from error import pysee_errors as pye
+from helpers import init_config
+from configs import paths as p
+
+API_URL = "http://uploads.im/api"
 
 
 def upload_picture(image_path):
     with open(image_path['path'], 'rb') as img:
-        response = requests.post(UPLOADS_API_URL, files={'upload':img})
-    if response.json()['status_code'] is 200:
+        try:
+            response = requests.post(API_URL, params={'upload':img})
+        except Exception as e:
+            raise pye['2']
+
+    if response.json()['status_code']:
         return response.json()['data']
     else:
-        return None
+        raise pye['9']
