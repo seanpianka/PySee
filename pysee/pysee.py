@@ -77,26 +77,26 @@ def take_screenshot(no_clipboard=False, no_output=False, no_upload=False,
         return False
 
     # if the screenshot should be uploaded
-    if no_upload is False:
+    if not no_upload:
         try:
             response = upload_screenshot(image_host, image_path)
         except PySeeError as e:
             print(e)
             return False
         if response is not None:
-            if no_output is False:
+            if not no_output:
                 print("Successful upload of {}.png".format(image_path['name']) +
                       "\nYou can find it here: {}".format(response))
 
-    elif no_upload is True:
+    elif no_upload:
         response = image_path['path'] # absolute path to image
-        if no_output is False:
+        if not no_output:
             print("Successful screenshot! \
                    {} was saved locally.".format(response))
 
-    if no_clipboard is False:
+    if not no_clipboard:
         pyperclip.copy(response)
-        if no_output is False:
+        if not no_output:
             print("\nIt has also been copied to your system clipboard.")
 
     return image_path['path']
@@ -153,7 +153,7 @@ def _main():
                      ' add --region, --full, or --window')
     else:
         for _mode in supported_modes:
-            if getattr(args, _mode) is True:
+            if getattr(args, _mode):
                 mode = _mode
     if not (args.imgur or args.uploads or args.slimg):
         parser.error('No image host specified.')
