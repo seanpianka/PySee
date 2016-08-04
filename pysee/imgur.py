@@ -11,42 +11,50 @@ anonimized image-file uploading to Imgur.
 
 .. seealso:: https://api.imgur.com/
 """
-
 import os
+import sys
 
 import requests
 import json
 from imgurpython import ImgurClient
+from imgurpython.helpers.error import ImgurClientError
 from datetime import datetime
 
-import helpers
+from helpers import init_config
 from configs import paths as p
+from error import pysee_errors as pye
 
 
 def authenticate_client():
-    configuration_file = p['configdir'] + 'config.ini'
+    conf_dir_path = p['config_dir_path']
+    conf_file = p['config_file_name']
+    config_parser= init_config(conf_dir_path + conf_file)
 
-    config_ini = helpers.init_config(configuration_file)
-    client_id = config_ini.get('Imgur_API', 'client_id')
-    client_secret = config_ini.get('Imgur_API', 'client_secret')
+    client_id = config_parser.get('Imgur_API', 'client_id')
+    client_secret = config_parser.get('Imgur_API', 'client_secret')
 
     return ImgurClient(client_id, client_secret)
 
 
 def upload_picture(image_path):
-    client = authenticate_client()
-
-    upload_json = {
-        'album': None,
-        'name': image_path['name'],
-        'title': None,
-        'description': 'Screenshot taken via PySee'
-    }
-
-    print('Uploading screenshot...')
     try:
+        print('Uploading screenshot...')
+        client = authenticate_client()
+        upload = {
+            'album': None,
+            'name': image_path['name'],
+            'title': None,
+            'description': 'Screenshot taken via PySee'
+        }
+
         return client.upload_from_path(image_path['path'],
-                                       config=upload_json,
+                                       config=upload,
                                        anon=True)
-    except:
-        return None
+
+    except (KeyboardInterrupt, SystemExit) as e:
+        raise pye['8']
+    except ImgurClientError as e:
+        print("There was an error validating your API keys for imgur.com.\n" +
+              "Go to https://api.imgur.com/oauth2/addclient to receive your" +
+              " own API keys.\n")
+        raise pye['9']

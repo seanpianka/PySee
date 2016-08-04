@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 """
 configs
 ~~~~~~~
@@ -10,60 +9,65 @@ are located within the user's home directory.
 :copyright: Copyright 2016 Sean Pianka
 :license: None
 """
-
 import os
 import sys
 
 import pyperclip
 
 from helpers import init_config
+from error import pysee_errors as pye
 
-config_file = 'config.ini'
+# Known hosts lists, used when checking for arguments
+supported_hosts = ['imgur', 'uploads', 'slimg']
+supported_modes = ['region', 'window', 'full']
+
+# Base location and name of config dir and .conf file
 paths = {}
-base_config_file_test = """[Imgur_API]
-client_id=YOUR_ID_HERE
+config_file_name = 'pysee.conf'
+paths['config_dir_path'] = os.path.expanduser('~/.config/pysee/')
+paths['config_file_name'] = config_file_name
+base_config_file_contents = """[Imgur_API]
+client_id=65701d960c6ab14
 client_secret=YOUR_SECRET_HERE
 refresh_token=
 
+[Slimg_API]
+client_id=eIVbKCqD3Omkiv0gADKyj6adX74QYhYc
+client_secret=YOUR_SECRET_HERE
+
 [path]
-config_path=~/.pysee/
+config_dir_path=~/.config/pysee/
 base_img_path=~/Pictures/"""
 
 
 def verify_configuration():
-    paths['configdir'] = os.path.expanduser('~/.pysee/')
+    conf_dir_path = paths['config_dir_path']
+    conf_file = paths['config_file_name']
 
-    if os.path.exists(paths['configdir']) is False:
+    if os.path.exists(conf_dir_path) is False:
         try:
             print("Creating configuration folder...")
-            os.makedirs(paths['configdir'])
+            os.makedirs(conf_dir_path)
         except OSError as e:
-            if e.errno != errno.EEXIST or not os.path.isdir(paths['configdir']):
-                raise
-                exit()
-    if os.path.exists(paths['configdir'] + config_file) is False:
+            if e.errno != errno.EEXIST or not os.path.isdir():
+                raise pye['7']
+
+    if os.path.exists(conf_dir_path + conf_file) is False:
         try:
             print("Creating configuration file...")
-            with open(paths['configdir'] + config_file, "w") as f:
-                f.write(base_config_file_test)
+            with open(conf_dir_path + conf_file, "w") as f:
+                f.write(base_config_file_contents)
         except OSError as e:
             if e.errno != errno.EEXIST:
-                raise
-                exit()
+                raise pye['7']
 
-    config_ini = init_config(paths['configdir'] + config_file)
-    paths['imgdir'] = os.path.expanduser(config_ini.get('path', 'base_img_path'))
+    config_parser = init_config(conf_dir_path + conf_file)
+    paths['imgdir'] = os.path.expanduser(config_parser.get('path', 'base_img_path'))
 
     try:
-        pyperclip.copy('')
+        pyperclip.copy('0')
     except pyperclip.exceptions.PyperclipException:
-        print("ERROR: Unable to locate a command-line X clipboard tool.\n" +
-              "Consider installing:\n" +
-              "    1) xclip (recommended)\n" +
-              "    2) xsel\n")
-        sys.exit(3)
-
-    return None
+        raise pye['5']
 
 
 if __name__ == "__main__":
