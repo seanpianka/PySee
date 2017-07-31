@@ -9,148 +9,245 @@ Imgur uploading and system clipboard copying.
 :copyright: Copyright 2016 Sean Pianka
 :license: None
 """
-__author__  = "Sean Pianka"
-__version__ = 2.1
-
 import os
-import errno
 import sys
-from subprocess import Popen, PIPE, STDOUT
-from datetime import datetime as dt
+import errno
+from subprocess import Popen, PIPE
+from datetime import datetime
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 
 import pyperclip
 
-from pysee import hosts
-import imgur
-import uploads_im
-import slimg
-from error import PySeeError, pysee_errors as pye
-from configs import (paths as p, verify_configuration,
-                     supported_hosts, supported_modes)
-from helpers import find_screenshot_tool, process_arguments
+from pysee.hosts import ImageHost
+from pysee.exceptions import PySeeError
+from pysee.utils import Tool
 
 
-def take_screenshot(no_clipboard=False, no_output=False, no_upload=False,
-                    image_host="imgur", mode="r", timed=0):
-    """ Initializes the process of capturing an area of the screen and saving
-    the region to an image file with extension .png.
+class PySee:
+    TIME_FORMAT = r'%Y-%m-%d-%H-%M-%S'
+    DEFAULTS = {'CONFIG_DIR_PATH': os.path.expanduser('~/.config/pysee/'),
+                'CONFIG_FILENAME': 'pysee.conf',
+                'CONFIG_FILE_CONTENTS': ''}
+
+    def __init__(self, config_dir_path: str="", config_filename: str="", options: dict=None):
+        """
+
+        Args:
+            config_dir_path:
+            config_filename:
+            options:
+        """
+        self.image_host = None
+
+        if not options:
+            self.options = {}
+        else:
+            self.options = options
+
+        self.paths = {'config_dir_path': os.path.expanduser(config_dir_path) if config_dir_path else PySee.DEFAULTS['CONFIG_DIR_PATH'],
+                      'config_filename': config_filename if config_filename else PySee.DEFAULTS['CONFIG_FILENAME']}
+
+        self.paths['config_file_path'] = os.path.join(self.paths['config_dir_path'], self.paths['config_filename'])
+
+        # Creates configuration files if not found
+        self.config_parser = _setup_configuration_files(self.paths)
+
+        self.paths['images_dir_path'] = os.path.expanduser(
+            self.config_parser.get(section='Path', option='default_images_dir_path')
+        )
+
+        self.tool = Tool.find_tool_by_name()
+        if not self.tool:
+            raise PySeeError("No screenshot tool was located on system")
+
+        self.preferred = {
+            'mode': self.config_parser.get(section="Preferences", option="mode"),
+            'tool': self.config_parser.get(section="Preferences", option="tool")
+        }
+
+    @staticmethod
+    def _create_configuration_folder(conf_dir_path, conf_filename, conf_file_contents):
+        """
+
+        Args:
+            conf_dir_path:
+            conf_filename:
+            conf_file_contents:
+
+        Returns:
+
+        """
+        if not os.path.exists(conf_dir_path):
+            try:
+                print("Creating configuration folder...")
+                os.makedirs(conf_dir_path)
+            except OSError as e:
+                if e.errno != errno.EEXIST or not os.path.isdir():
+                    raise PySeeError("Unable to create configuration configuration folder: {}".format(str(e)))
+
+        if not os.path.exists(os.path.join(conf_dir_path, conf_filename)):
+            try:
+                print("Creating configuration file...")
+                with open(conf_dir_path + conf_filename, "w") as f:
+                    f.write(conf_file_contents)  # Base configuration file contents
+            except OSError as e:
+                if e.errno != errno.EEXIST:
+                    raise PySeeError("Unable to parse configuration file: {}".format(str(e)))
+
+    def run(self, image_host_name, no_clipboard=False, no_output=False,
+            no_upload=False, mode="r", timed=0):
+        """
+
+        Args:
+            image_host_name:
+            no_clipboard:
+            no_output:
+            no_upload:
+            mode:
+            timed:
+
+        Returns:
+
+        """
+        self.image_host = ImageHost.get_image_host_by_name(image_host_name)
+        if not self.image_host:
+            raise PySeeError("Unable to upload screenshot to selected image host.")
+
+        image_path = self.capture_image(mode)
+        image_url = self.upload_image(image_path, no_upload)
+
+        if not no_clipboard:
+            pyperclip.copy(image_path if no_upload else image_url)
+            if not no_output:
+                print("\nIt has also been copied to your system clipboard.")
+
+    def upload_image(self, image_path, no_upload):
+        """
+
+        Args:
+            image_path:
+            no_upload:
+
+        Returns:
+
+        """
+        if not no_upload:
+            uploaded_image_url = self.image_host.upload(image_path)['link']
+
+            if uploaded_image_url:
+                if not no_output:
+                    print("Successful upload of {}.png".format(image_path['name']) +
+                          "\nYou can find it here: {}".format(response))
+            else:
+                raise PySeeError("Unable to upload screenshot to selected image host", 2)
+        else:
+            local_image_path = image_path
+            if not no_output:
+                print("Successful screenshot! {} was saved locally.".format(local_image_path))
+
+    def capture_image(self, mode: str, extension='png'):
+        """
+
+        Args:
+            mode:
+            extension:
+
+        Returns:
+
+        """
+        tool = self.tool
+        command = tool.command
+
+        if mode in ["r", "region"]:
+            command = ' '.join([command, tool.flags['region']])
+        elif mode in ["f", "full"]:
+            command = ' '.join([command, tool.flags['full']])
+        elif mode in ["w", "window"]:
+            command = ' '.join([command, tool.flags['window']])
+        else:
+            raise PySeeError("No valid screenshot mode selected.")
+
+        current_time = datetime.now().strftime(PySee.TIME_FORMAT)
+        image_file_path = ''.join([self.paths['images_dir_path'],
+                                  '{}.{} 2>/dev/null'.format(current_time, extension)])
+        command = ' '.join([command, tool.flags['filename'], image_file_path])
+
+        try:
+            Popen([command], shell=True, stdout=PIPE, stdin=PIPE, stderr=PIPE).communicate()
+        except:
+            raise PySeeError("Failed to process or execute screenshot command", 3)
+
+        return image_file_path
+
+
+def _setup_configuration_files(paths: dict) -> configparser.ConfigParser:
+    """
 
     Args:
-        no_clipboard: flag which determines if image URL will be copied
-                      to system clipboard
-        no_output: flag which determines if log output from tool will be
-                   displayed in the terminal window
-        no_upload: flag which determines if the screenshot should only be
-                   saved locally or uploaded to image host
-        image_host: determines image host that screenshot will be uploaded to
-            expects:
-                1) "imgur" for imgur.com
-                2) "slimg" for sli.mg
-                3) "uploads" for uploads.im
-        mode: determines type of screenshot to be taken
-            expects:
-                1) "r" or "region" for region-select type capture
-                2) "f" or "full" for all-monitors type capture
-                3) "w" or "window" for window-select type capture
-        timed:
+        paths:
 
     Returns:
-        boolean, if screenshot process was successful
 
     """
-    # Creates configuration files if not found
-    try:
-        verify_configuration()
-    except PySeeError as e:
-        print(e)
-        return False
+    config_parser = configparser.ConfigParser()
 
-    # Determines the system's installed screenshot tool
-    try:
-        screenshot_tool = find_screenshot_tool()
-        if screenshot_tool is None:
-            raise pye['1']
-    except PySeeError as e:
-        print(e)
-        return False
-
-    # Creation and saving of screenshot + image path to file
-    try:
-        image_path = {}
-        capture_screenshot(screenshot_tool, image_path, mode)
-    except PySeeError as e:
-        print(e)
-        return False
-
-    # if the screenshot should be uploaded
-    if not no_upload:
-        try:
-            response = upload_screenshot(image_host, image_path)
-        except PySeeError as e:
-            print(e)
-            return False
-        if response is not None:
-            if not no_output:
-                print("Successful upload of {}.png".format(image_path['name']) +
-                      "\nYou can find it here: {}".format(response))
-
-    elif no_upload:
-        response = image_path['path'] # absolute path to image
-        if not no_output:
-            print("Successful screenshot! \
-                   {} was saved locally.".format(response))
-
-    if not no_clipboard:
-        pyperclip.copy(response)
-        if not no_output:
-            print("\nIt has also been copied to your system clipboard.")
-
-    return image_path['path']
-
-
-def capture_screenshot(tool, image_path, mode):
-    time_format = r'%Y-%m-%d-%H-%M-%S'
-
-    # Creating the command for which to run based on mode and located tool
-    command = tool.command + ' '
-    if mode is "r" or mode is "region":
-        command += tool.area
-    elif mode is "f" or mode is "full":
-        command += tool.full
-    elif mode is "w" or mode is "window":
-        command += tool.window
-    command += ' ' + tool.filename + ' ' + p['imgdir'] + '{}.png 2>/dev/null'
+    PySee._create_configuration_folder(paths['config_dir_path'],
+                                       paths['config_filename'],
+                                       PySee.DEFAULTS['CONFIG_FILE_CONTENTS'])
 
     try:
-        cmd = Popen([command.format(dt.now().strftime(time_format))],
-                    shell=True,
-                    stdout=PIPE, stdin=PIPE, stderr=PIPE)
-        img_path = p['imgdir'] + dt.now().strftime(time_format) + '.png'
-        cmd.communicate()
-        img_name = img_path.replace(p['imgdir'], '')[:-4]
-        image_path['path'] = img_path  # absolute path of screenshot
-        image_path['name'] = img_name  # filename of screenshot
-    except:
-        raise pye['3']
+        config_parser.read(str(paths['config_file_path']))
+    except configparser.NoSectionError as e:
+        raise PySeeError("Unable to parse configuration file: {}".format(str(e)), 7)
 
-
-def upload_screenshot(image_host, image_path):
-    try:
-        if image_host is "imgur":
-            response = imgur.upload_picture(image_path)
-            return response['link']
-        elif image_host is "uploads":
-            response = uploads_im.upload_picture(image_path)
-            return response['img_url']
-        elif image_host is "slimg":
-            response = slimg.upload_picture(image_path)
-            return response['img_url']
-    except PySeeError as e:
-        raise(e)
+    return config_parser
 
 
 def _main():
-    args, parser = process_arguments(supported_hosts, supported_modes)
+    import argparse
+
+    parser = argparse.ArgumentParser()
+
+    # generate arguments of modes based on supported screenshot modes
+    for mode in supported_modes:
+        parser.add_argument(
+            '--{}'.format(mode),
+            '-{}'.format(mode[:1].lower()),
+            help='Use the {} mode of an available screenshot \
+                  tool to capture an region of the screen.'.format(mode),
+            action="store_true")
+    # generate arguments of hosts based on supported image host
+    for host in supported_hosts:
+        # ensuring image host flags will not conflict with mode flags
+        short_flag = '-{}'.format(host[:1].lower()) \
+            if '-{}'.format(host[:1].lower()) not in ['w','r','f'] \
+            else '-{}'.format(host[:2].lower())
+        parser.add_argument(
+            '--{}'.format(host),
+            short_flag,
+            help='Upload screenshot to {}'.format(host),
+            action="store_true")
+
+    parser.add_argument('--no-upload', "-1",
+                        help='Do not upload to an image host \
+                              (does not conflict with image host flags)',
+                        action="store_true")
+    parser.add_argument('--no-output', "-2",
+                        help='Surpress output from the scripts',
+                        action="store_true")
+    parser.add_argument('--no-clipboard', "-3",
+                        help='Prevents copying of returned \
+                              image URL to the system clipboard',
+                        action="store_true")
+    parser.add_argument('--timed', "-4",
+                        help='Allows screenshots to occur automatically \
+                              at a set time interval on a specific screen \
+                              region',
+                        action="store_true")
+    args = parser.parse_args()
     no_clipboard = args.no_clipboard
     no_output = args.no_output
     no_upload = args.no_upload
@@ -169,14 +266,10 @@ def _main():
             if getattr(args, _image_host):
                 image_host = _image_host
 
-    from pprint import pprint
-    pprint(args)
-
-    take_screenshot(no_clipboard=no_clipboard,
-                    no_output=no_output,
-                    no_upload=no_upload,
-                    image_host=image_host,
-                    mode=mode)
+    app = PySee()
+    app.run(no_clipboard=no_clipboard, no_output=no_output,
+            no_upload=no_upload, image_host=image_host,
+            mode=mode)
 
 
 if __name__ == "__main__":
