@@ -1,4 +1,3 @@
-from pysee import PySee
+import pysee
 
-app = PySee()
-app.run("imgur")
+pysee.run()
