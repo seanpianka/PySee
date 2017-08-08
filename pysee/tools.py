@@ -1,4 +1,4 @@
-import distutils
+from distutils.spawn import find_executable
 
 
 class CaptureTool:
@@ -15,5 +15,5 @@ class CaptureTool:
                       for flag in CaptureTool.valid_flags}
 
         # CaptureTool is not valid if not installed.
-        if distutils.spawn.find_executable(command):
+        if find_executable(name):
             CaptureTool.valid_tools[name] = self
