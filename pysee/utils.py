@@ -59,6 +59,9 @@ def _get_config_parser(config_filepath=''):
         try:
             logger.info("Creating configuration file...")
             config_parser = configparser.ConfigParser()
+            config_parser.add_section('Imgur')
+            config_parser.add_section('Slimg')
+            config_parser.add_section('Preferences')
             config_parser['Imgur']['client_id'] = ''
             config_parser['Imgur']['client_secret'] = ''
             config_parser['Imgur']['refresh_token'] = ''
