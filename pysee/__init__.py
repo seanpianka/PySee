@@ -21,10 +21,10 @@ except ImportError:
 
 import pyperclip
 
-from pysee.hosts import hosts
-from pysee.tools import CaptureTool
-from pysee.logging import PySeeLogger
-from pysee.utils import DEFAULTS
+from hosts import HOSTS
+from tools import CaptureTool
+from logger import PySeeLogger
+from utils import DEFAULTS
 
 
 __author__ = 'Sean Pianka'
@@ -82,13 +82,16 @@ def run(host_name=DEFAULTS['HOST_NAME'], tool_name=None, no_clipboard=False,
                 raise
 
     try:
-        host = hosts[host_name]
+        host = HOSTS[host_name]
         host_name = host_name.lower()
     except KeyError:
         logger.debug('Invalid host name provided.')
-        host = hosts[DEFAULTS['HOST_NAME']]
+        host = HOSTS[DEFAULTS['HOST_NAME']]
 
-    image_filepath = take_screenshot(tool, mode, save_dir, title=title)
+    try:
+        image_filepath = take_screenshot(tool, mode, save_dir, title=title)
+    except KeyboardInterrupt:
+        sys.exit()
     logger.info('Screenshot capture: "{}" was saved in "{}".'.format(os.path.split(image_filepath)[-1], save_dir))
     if not no_upload:
         image_url = upload_screenshot(image_filepath, host, title)
@@ -141,10 +144,19 @@ def take_screenshot(tool, mode, save_dir, title='', extension='png'):
 
     command = ' '.join([tool.command, tool.modes[mode], tool.flags['filename'], image_filepath])
 
+    cmd = Popen([command], shell=True, stdout=PIPE, stdin=PIPE, stderr=PIPE)
+
     try:
-        Popen([command], shell=True, stdout=PIPE, stdin=PIPE, stderr=PIPE).communicate()
+        cmd.communicate()
+
+        if cmd.wait() != 0:
+            err = "Screenshot tool process exited with a non-zero return code."
+            logger.error(err)
+            raise RuntimeError(err)
     except KeyboardInterrupt:
-        raise
+        err = "Screenshot tool process was exited before the screenshot completed."
+        logger.error(err)
+        raise KeyboardInterrupt(err)
 
     return image_filepath
 

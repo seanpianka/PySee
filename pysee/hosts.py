@@ -4,8 +4,8 @@ import logging
 import imgurpython
 import requests
 
-from pysee.utils import get_config_value
-from pysee.logging import PySeeLogger
+from utils import get_config_value
+from logger import PySeeLogger
 
 
 logger = PySeeLogger(__name__)
@@ -68,5 +68,5 @@ def _uploadsim_upload(image_path, title):
     return None
 
 
-hosts = {'imgur': _imgur_upload,
+HOSTS = {'imgur': _imgur_upload,
          'uploadsim': _uploadsim_upload}
