@@ -78,8 +78,9 @@ def run(host_name=DEFAULTS['HOST_NAME'], tool_name=None, no_clipboard=False,
                     logger.debug('Found installed tool, but lacked support for desired mode.')
                     tool = None
             except KeyError:
-                logger.exception("No installed tool supports the mode \"{}\".".format(mode))
-                raise
+                err = "No installed tool supports the mode \"{}\".".format(mode)
+                logger.exception(err)
+                raise LookupError(err)
 
     try:
         host = HOSTS[host_name]
@@ -142,7 +143,15 @@ def take_screenshot(tool, mode, save_dir, title='', extension='png'):
         title = ('.'.join([current_time, extension]))
     image_filepath = os.path.join(os.path.abspath(save_dir), title)
 
-    command = ' '.join([tool.command, tool.modes[mode], tool.flags['filename'], image_filepath])
+    try:
+        command = ' '.join([tool.command,
+                            tool.modes[mode],
+                            tool.flags.get('filename', ''),
+                            image_filepath])
+    except KeyError:
+        err = "Selected tool does not support the desired mode."
+        logger.error(err)
+        raise LookupError(err)
 
     cmd = Popen([command], shell=True, stdout=PIPE, stdin=PIPE, stderr=PIPE)
 
