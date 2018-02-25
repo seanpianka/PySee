@@ -38,7 +38,7 @@ CaptureTool('gnome-screenshot', 'gnome-screenshot', region='-a', window='-w', fi
 CaptureTool('screencapture', 'screencapture -Cx', region='-s', window='-w')
 CaptureTool('shutter', 'shutter', region='-s', window='-w', full='-f', filename='-o')
 CaptureTool('xfce4-screenshooter', 'xfce4-screenshooter', region='-r', window='-w', full='-f', filename='-s')
-CaptureTool('scrot', 'scrot', region='-s', window='-s')
+CaptureTool('scrot', 'scrot', region='-s', window='-s', full=' ')
 # More tools here...
 
 
