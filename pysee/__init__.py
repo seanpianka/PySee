@@ -110,16 +110,18 @@ def run(host_name=DEFAULTS['HOST_NAME'], tool_name=None, no_clipboard=False,
 
 
 def take_screenshot(tool, mode, save_dir, title='', extension='png'):
-    """
+    """ Execute the CaptureTool instance for whichever screenshotting tool with
+    the provided screenshot mode, and save the new screenshot to the filename
+    and extension specified.
 
     Args:
-        tool:
-        mode:
-        save_dir:
-        title:
-        extension:
+        tool: a CaptureTool instance
+        mode: an element of Capturetool.valid_modes, modes for screenshot tool
+        save_dir: where to save the screenshot
+        title: save picture with title
+        extension: save picture with extension
 
-    Returns:
+    Returns: absolute filepath to the screenshot
 
     """
     time_format = r'%Y-%m-%d-%H-%M-%S'
@@ -171,14 +173,12 @@ def take_screenshot(tool, mode, save_dir, title='', extension='png'):
 
 
 def upload_screenshot(image_path, host_upload, title):
-    """
+    """ Upload a screenshot given an image API function and title.
 
     Args:
-        image_path:
-        host_upload:
-        title:
-
-    Returns:
+        image_path: path to screenshot file to be uploaded
+        host_upload: a CaptureTool instance indicating which screenshot tool to use
+        title: title of the screenshot to be provided to the image API
 
     """
     if not callable(host_upload):
