@@ -12,6 +12,7 @@ Imgur uploading and system clipboard copying.
 import logging
 import os
 import sys
+import copy
 from datetime import datetime
 from subprocess import Popen, PIPE
 try:
@@ -21,10 +22,10 @@ except ImportError:
 
 import pyperclip
 
-from hosts import HOSTS
-from tools import CaptureTool
-from logger import PySeeLogger
-from utils import DEFAULTS
+from .hosts import HOSTS
+from .tools import CaptureTool
+from .logger import PySeeLogger
+from .utils import DEFAULTS
 
 
 __author__ = 'Sean Pianka'
@@ -32,14 +33,6 @@ __email__ = 'pianka@eml.cc'
 __version__ = '2.0.0'
 
 logger = PySeeLogger(__name__)
-
-
-CaptureTool('gnome-screenshot', 'gnome-screenshot', region='-a', window='-w', filename='-f', delay='-d')
-CaptureTool('screencapture', 'screencapture -Cx', region='-s', window='-w')
-CaptureTool('shutter', 'shutter', region='-s', window='-w', full='-f', filename='-o')
-CaptureTool('xfce4-screenshooter', 'xfce4-screenshooter', region='-r', window='-w', full='-f', filename='-s')
-CaptureTool('scrot', 'scrot', region='-s', window='-s', full=' ')
-# More tools here...
 
 
 def run(host_name=DEFAULTS['HOST_NAME'], tool_name=None, no_clipboard=False,
@@ -65,6 +58,9 @@ def run(host_name=DEFAULTS['HOST_NAME'], tool_name=None, no_clipboard=False,
     if no_output:
         logging.propagate = False
 
+    # Logic for finding valid installed tool uses popitem, must restore list...
+    valid_tools_tmp = copy.copy(CaptureTool.valid_tools)
+
     try:
         tool_name = tool_name.lower()
         tool = CaptureTool.valid_tools[tool_name]
@@ -81,6 +77,9 @@ def run(host_name=DEFAULTS['HOST_NAME'], tool_name=None, no_clipboard=False,
                 err = "No installed tool supports the mode \"{}\".".format(mode)
                 logger.exception(err)
                 raise LookupError(err)
+
+    # Restoring list, eventually will fix crummy logic above...
+    CaptureTool.valid_tools = valid_tools_tmp
 
     try:
         host = HOSTS[host_name]
@@ -158,10 +157,11 @@ def take_screenshot(tool, mode, save_dir, title='', extension='png'):
     cmd = Popen([command], shell=True, stdout=PIPE, stdin=PIPE, stderr=PIPE)
 
     try:
-        cmd.communicate()
+        stdout, stderr = cmd.communicate()
+        ret = cmd.wait()
 
-        if cmd.wait() != 0:
-            err = "Screenshot tool process exited with a non-zero return code."
+        if ret != 0:
+            err = "Screenshot tool process exited with a non-zero return code ({}): stdout: \"{}\"; stderr: \"{}\"".format(ret, stdout, stderr)
             logger.error(err)
             raise RuntimeError(err)
     except KeyboardInterrupt:

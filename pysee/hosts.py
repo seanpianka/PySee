@@ -4,8 +4,8 @@ import logging
 import imgurpython
 import requests
 
-from utils import get_config_value
-from logger import PySeeLogger
+from .utils import get_config_value
+from .logger import PySeeLogger
 
 
 logger = PySeeLogger(__name__)

@@ -2,15 +2,17 @@ import configparser
 import errno
 import os
 
-from logger import PySeeLogger
+from .logger import PySeeLogger
 
 
 logger = PySeeLogger(__name__)
 
-DEFAULTS = {'CONFIG_DIR_PATH': os.path.expanduser('~/.config/pysee/'),
+username = os.environ["LOGNAME"] if not os.getenv("SUDO_USER") else os.getenv("SUDO_USER")
+
+DEFAULTS = {'CONFIG_DIR_PATH': os.path.expanduser('/home/{}/.config/pysee/'.format(username)),
             'CONFIG_FILENAME': 'pysee.conf',
             'CONFIG_FILE_CONTENTS': '',
-            'SAVE_DIR_PATH': os.path.expanduser('~/Pictures/'),
+            'SAVE_DIR_PATH': os.path.expanduser('/home/{}/Pictures/'.format(username)),
             'TOOL_MODE': 'region',
             'HOST_NAME': 'imgur'}
 
