@@ -22,10 +22,10 @@ except ImportError:
 
 import pyperclip
 
-from .hosts import HOSTS
-from .tools import CaptureTool
-from .logger import PySeeLogger
-from .utils import DEFAULTS
+from hosts import HOSTS
+from tools import CaptureTool
+from logger import PySeeLogger
+from utils import DEFAULTS
 
 
 __author__ = 'Sean Pianka'

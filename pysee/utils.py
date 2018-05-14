@@ -2,7 +2,7 @@ import configparser
 import errno
 import os
 
-from .logger import PySeeLogger
+from logger import PySeeLogger
 
 
 logger = PySeeLogger(__name__)
