@@ -1,3 +1,4 @@
+#!/home/sean/Development/.virtualenvs/pysee/bin/python
 """
 PySee
 ~~~~~
@@ -9,10 +10,13 @@ Imgur uploading and system clipboard copying.
 :license: None
 
 """
-import logging
+import configparser
+import errno
 import os
+import logging
 import sys
 import copy
+from distutils.spawn import find_executable
 from datetime import datetime
 from subprocess import Popen, PIPE
 try:
@@ -20,41 +24,179 @@ try:
 except ImportError:
     import ConfigParser as configparser
 
+import imgurpython
+import requests
 import pyperclip
-
-from hosts import HOSTS
-from tools import CaptureTool
-from logger import PySeeLogger
-from utils import DEFAULTS
-
 
 __author__ = 'Sean Pianka'
 __email__ = 'pianka@eml.cc'
 __version__ = '2.0.0'
 
-logger = PySeeLogger(__name__)
+
+username = os.environ["LOGNAME"] if not os.getenv("SUDO_USER") else os.getenv("SUDO_USER")
+DEFAULTS = {'CONFIG_DIR_PATH': os.path.expanduser('/home/{}/.config/pysee/'.format(username)),
+            'CONFIG_FILENAME': 'pysee.conf',
+            'CONFIG_FILE_CONTENTS': '',
+            'SAVE_DIR_PATH': os.path.expanduser('/home/{}/Pictures/'.format(username)),
+            'TOOL_MODE': 'region',
+            'HOST_NAME': 'imgur'}
 
 
-def run(host_name=DEFAULTS['HOST_NAME'], tool_name=None, no_clipboard=False,
+
+class PySeeFormatter(logging.Formatter):
+    err_fmt  = "[*] ERROR: %(msg)s"
+    dbg_fmt  = "[-] DEBUG: %(module)s: %(lineno)d: %(msg)s"
+    info_fmt = "[+] %(msg)s"
+
+    def __init__(self):
+        super().__init__(fmt="%(levelno)d: %(msg)s", datefmt=None, style='%')
+
+    def format(self, record):
+        # Save the original format configured by the user
+        # when the logger formatter was instantiated
+        format_orig = self._style._fmt
+
+        # Replace the original format with one customized by logging level
+        if record.levelno == logging.DEBUG:
+            self._style._fmt = PySeeFormatter.dbg_fmt
+
+        elif record.levelno == logging.INFO:
+            self._style._fmt = PySeeFormatter.info_fmt
+
+        elif record.levelno == logging.ERROR:
+            self._style._fmt = PySeeFormatter.err_fmt
+
+        # Call the original formatter class to do the grunt work
+        result = logging.Formatter.format(self, record)
+
+        # Restore the original format configured by the user
+        self._style._fmt = format_orig
+
+        return result
+
+
+class PySeeLogger(logging.Logger):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        formatter = PySeeFormatter()
+        handler = logging.StreamHandler(sys.stdout)
+        #logger = logging.Logger(__name__)
+        handler.setFormatter(formatter)
+        self.addHandler(handler)
+        self.setLevel(logging.INFO)
+
+
+class CaptureTool:
+    valid_tools = {}
+    valid_modes = ['region', 'full', 'window']
+    valid_flags = ['filename']
+
+    def __init__(self, name, command, **kwargs):
+        self.name = name
+        self.command = command
+        self.modes = {mode: kwargs.get(mode, '')
+                      for mode in CaptureTool.valid_modes}
+        self.flags = {flag: kwargs.get(flag, '')
+                      for flag in CaptureTool.valid_flags}
+
+        # CaptureTool is not valid if not installed.
+        if find_executable(name):
+            CaptureTool.valid_tools[name] = self
+
+
+def get_config_value(section, attr, **kwargs):
+    return _get_config_parser(**kwargs)[section][attr]
+
+
+def _get_config_parser(config_filepath=''):
+    config_parser = None
+    if config_filepath == '':
+        config_filepath = os.path.join(DEFAULTS['CONFIG_DIR_PATH'],
+                                       DEFAULTS['CONFIG_FILENAME'])
+
+    if not os.path.exists(os.path.split(config_filepath)[0]):
+        try:
+            logger.info("Creating configuration folder...")
+            os.makedirs(os.path.split(config_filepath)[0])
+        except OSError as e:
+            if e.errno != errno.EEXIST or not os.path.isdir():
+                logger.exception("Unable to create configuration configuration folder: {}".format(str(e)))
+                raise
+
+    if not os.path.exists(config_filepath):
+        try:
+            logger.info("Creating configuration file...")
+            config_parser = configparser.ConfigParser()
+            config_parser.add_section('Imgur')
+            config_parser.add_section('Slimg')
+            config_parser.add_section('Preferences')
+            config_parser['Imgur']['client_id'] = ''
+            config_parser['Imgur']['client_secret'] = ''
+            config_parser['Imgur']['refresh_token'] = ''
+            config_parser['Slimg']['client_id'] = ''
+            config_parser['Preferences']['tool'] = ''
+            config_parser['Preferences']['mode'] = ''
+
+            with open(config_filepath, "w") as f:
+                config_parser.write(f)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                logger.exception("Unable to parse configuration file: {}".format(str(e)))
+                raise
+
+    if not config_parser:
+        config_parser = configparser.ConfigParser()
+        try:
+            config_parser.read(str(config_filepath))
+        except configparser.NoSectionError as e:
+            logger.exception("Unable to parse configuration file: {}".format(str(e)))
+            raise
+
+    return config_parser
+
+
+def _imgur_upload(image_path, title):
+    client_id = get_config_value('Imgur', 'client_id')
+    client_secret = get_config_value('Imgur', 'client_secret')
+    client = imgurpython.ImgurClient(client_id, client_secret)
+
+    try:
+        config = {'album': "",
+                  'name': os.path.split(image_path)[-1],
+                  'title': title,
+                  'description': 'Screenshot taken via PySee'}
+
+        response = client.upload_from_path(image_path, config=config, anon=True)
+        logger.debug("Imgur upload via imgurpython was successful.")
+        return response['link']
+    except imgurpython.helpers.error.ImgurClientError:
+        logger.exception("There was an error validating your API keys for imgur.com.\n" +
+                          "Go to https://api.imgur.com/oauth2/addclient to receive your" +
+                          " own API keys.\n")
+        raise
+
+
+def _uploadsim_upload(image_path, title):
+    api_url = "http://ufileploads.im/api"
+
+    with open(image_path, 'rb') as img:
+        try:
+            response = requests.get(api_url, files={'upload': img})
+            logger.debug("Uploadsim upload via POST was successful.")
+        except requests.exceptions.RequestException:
+            logger.error("Unable to upload screenshot to selected image host.")
+            raise
+
+    if response.json()['status_code']:
+        return response.json()['data']
+
+    return None
+
+
+def main(host_name=DEFAULTS['HOST_NAME'], tool_name=None, no_clipboard=False,
         no_output=False, no_upload=False, mode=DEFAULTS['TOOL_MODE'],
-        save_dir=DEFAULTS['SAVE_DIR_PATH'], title='', timed=0, delay=0):
-    """
+        save_dir=DEFAULTS['SAVE_DIR_PATH'], title='', timed=0):
 
-    Args:
-        host_name:
-        tool_name:
-        no_clipboard:
-        no_output:
-        no_upload:
-        mode:
-        save_dir:
-        title:
-        timed:
-        delay:
-
-    Returns:
-
-    """
     if no_output:
         logging.propagate = False
 
@@ -88,10 +230,7 @@ def run(host_name=DEFAULTS['HOST_NAME'], tool_name=None, no_clipboard=False,
         logger.debug('Invalid host name provided.')
         host = HOSTS[DEFAULTS['HOST_NAME']]
 
-    try:
-        image_filepath = take_screenshot(tool, mode, save_dir, title=title)
-    except KeyboardInterrupt:
-        sys.exit()
+    image_filepath = take_screenshot(tool, mode, save_dir, title=title)
     logger.info('Screenshot capture: "{}" was saved in "{}".'.format(os.path.split(image_filepath)[-1], save_dir))
     if not no_upload:
         image_url = upload_screenshot(image_filepath, host, title)
@@ -196,6 +335,22 @@ def upload_screenshot(image_path, host_upload, title):
     return response
 
 
+logger = PySeeLogger(__name__)
+logging.getLogger("requests").setLevel(logging.WARNING)
+
+
+HOSTS = {'imgur': _imgur_upload,
+         'uploadsim': _uploadsim_upload}
+
+
+CaptureTool('gnome-screenshot', 'gnome-screenshot', region='-a', window='-w', filename='-f')
+CaptureTool('screencapture', 'screencapture -Cx', region='-s', window='-w')
+CaptureTool('shutter', 'shutter', region='-s', window='-w', full='-f', filename='-o')
+CaptureTool('xfce4-screenshooter', 'xfce4-screenshooter', region='-r', window='-w', full='-f', filename='-s')
+CaptureTool('scrot', 'scrot', region='-s', window='-s', full=' ')
+# More tools here...
+
+
 if __name__ == '__main__':
     import argparse
 
@@ -230,11 +385,6 @@ if __name__ == '__main__':
                         help='Do not copy image URL to system clipboard.',
                         action="store_true")
 
-    parser.add_argument('--delay', metavar='N', type=int, default=0,
-                        help='Set a delay of `N` seconds before taking the screenshot. \
-                              Ensure you have a screenshot tool installed which \
-                              supports this feature.')
-
     parser.add_argument('--timed', metavar='N', type=int, default=0,
                         help='Allows screenshots to occur automatically \
                               every `N` seconds on a specific screen \
@@ -250,6 +400,6 @@ if __name__ == '__main__':
     args = {k: v for k, v in args.items() if v is not None}
 
     try:
-        run(**args)
+        main(**args)
     except (KeyboardInterrupt, SystemExit):
         sys.exit()

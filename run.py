@@ -1,3 +1,0 @@
-import pysee
-
-pysee.run()
