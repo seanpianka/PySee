@@ -1,3 +1,14 @@
+"""
+PySee
+~~~~~
+A lightweight screenshot tool with automatic
+Imgur uploading and system clipboard copying.
+
+:author: Sean Pianka <me@seanpianka.com>
+:copyright: Copyright 2016 Sean Pianka
+:license: None
+
+"""
 import argparse
 import configparser
 import errno
