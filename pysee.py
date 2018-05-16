@@ -85,7 +85,24 @@ class PySee:
         self.cp.update_config(values)
         self.cp.write_config()
 
-    def main(self, host_name, tool_name, mode, clipboard, logging, upload, save, save_dir):
+    def main(self, host_name=None, tool_name=None, mode=None, clipboard=None, logging=None, upload=None, save=None, save_dir=None):
+        if host_name is None:
+            host_name = DEFAULTS['HOST']
+        if tool_name is None:
+            tool_name = DEFAULTS['TOOL']
+        if mode is None:
+            mode = DEFAULTS['MODE']
+        if clipboard is None:
+            clipboard = DEFAULTS['CLIPBOARD']
+        if logging is None:
+            logging = DEFAULTS['LOGGING']
+        if upload is None:
+            upload = DEFAULTS['UPLOAD']
+        if save is None:
+            save = DEFAULTS['SAVE']
+        if save_dir is None:
+            save_dir = DEFAULTS['SAVE_DIR']
+
         if not logging:
             _logging.propagate = False
 
