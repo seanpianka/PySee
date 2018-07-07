@@ -406,6 +406,8 @@ DEFAULTS['HOST'] = list(ImageHost.valid_hosts.keys())[0]
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
+    arg_validate = lambda v: v.lower() in ["y", "yes", "1", "true"]
+
     parser.add_argument('--init', default=False,
                         help='Initialize PySee and its configuration file information.',
                         action="store_true")
@@ -426,19 +428,19 @@ if __name__ == '__main__':
 
     parser.add_argument('--upload', "-u", default=DEFAULTS['UPLOAD'],
                         help='Upload screenshot to an image host after capture.',
-                        action="store_true")
+                        required=False, type=arg_validate)
 
     parser.add_argument('--logging', "-l", default=DEFAULTS['LOGGING'],
                         help='Output any logged information to the terminal.',
-                        action="store_true")
+                        required=False, type=arg_validate)
 
     parser.add_argument('--clipboard', "-c", default=DEFAULTS['CLIPBOARD'],
                         help='Copy image URL to system clipboard after capture.',
-                        action="store_true")
+                        required=False, type=arg_validate)
 
     parser.add_argument('--save', "-s", default=DEFAULTS['SAVE'],
                         help='Save screenshot locally after capture.',
-                        action="store_true")
+                        required=False, type=arg_validate)
 
     parser.add_argument('--gui', default=False,
                         help='Start PySee in GUI mode.',
