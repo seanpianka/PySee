@@ -137,7 +137,7 @@ class PySee:
             host = ImageHost.valid_hosts[DEFAULTS['HOST_NAME']]
 
         image_filepath = self.take_screenshot(tool, mode, save_dir)
-        logger.info('Screenshot capture: "{}" was saved in "{}".'.format(os.path.split(image_filepath)[-1], save_dir))
+        logger.info('Local screenshot capture: "{}".'.format(image_filepath))
         if upload:
             image_url = self.upload_screenshot(image_filepath, host)
             logger.info('Image upload: "{}" was uploaded to "{}" at "{}".'.format(os.path.split(image_filepath)[-1], host_name, image_url))
