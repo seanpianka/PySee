@@ -25,7 +25,7 @@ try:
 except ImportError:
     import ConfigParser as configparser
 
-import imgurpython
+# import imgurpython
 import requests
 import pyperclip
 
@@ -402,6 +402,8 @@ class ImageHost:
 
     @staticmethod
     def _imgur_upload(image_path, cp):
+        import imgurpython
+
         client = imgurpython.ImgurClient(
             cp.get_val("Imgur", "client_id"), cp.get_val("Imgur", "client_secret")
         )
