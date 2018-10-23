@@ -153,7 +153,7 @@ class PySeeApp(tk.Tk):
         save_option,
         save_dir,
     ):
-        image_url = self.pysee.main(
+        image_url = pysee.execute(
             mode=mode,
             host_name=image_host,
             tool_name=capture_tool,
@@ -544,7 +544,7 @@ class SettingsPage(tk.Frame):
         self.bottom_frame.grid(row=1, column=0, sticky="nsew")
 
 
-def main():
+if __name__ == "__main__":
     app = PySeeApp()
     app.resizable(width=False, height=False)
 
@@ -581,7 +581,3 @@ def main():
         )
 
     app.mainloop()
-
-
-if __name__ == "__main__":
-    main()
